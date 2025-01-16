@@ -8,3 +8,6 @@ NOT_ENOUGH_PERMISSIONS = {
 # Item responses
 ITEM_NOT_FOUND = {status.HTTP_404_NOT_FOUND: {"description": "Item not found"}}
 ITEM_RESPONSES = {**ITEM_NOT_FOUND, **NOT_ENOUGH_PERMISSIONS}
+
+# Player responses
+POST_PLAYERS_RESPONSES = {status.HTTP_201_CREATED: {"description": "Player created"}}
