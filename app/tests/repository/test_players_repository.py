@@ -1,9 +1,11 @@
 import uuid
 
+import pytest
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.player import PlayerCreate
 from app.repository.players_repository import PlayersRepository
+from app.utilities.exceptions import NotUniqueException
 
 
 async def test_create_player(session: AsyncSession) -> None:
@@ -24,19 +26,22 @@ async def test_create_player(session: AsyncSession) -> None:
     assert player.time_availability is None
 
 
-# @pytest.mark.skip()
-# async def test_create_player_email_already_exists_raises_exception(
-#     session: AsyncSession,
-# ) -> None:
-#     repo = PlayersRepository(session)
+async def test_create_player_email_already_exists_raises_exception(
+    session: AsyncSession,
+) -> None:
+    repo = PlayersRepository(session)
 
-#     email = "name@domain.com"
+    user_public_id = uuid.uuid4()
+    duplicated_user_p_id = user_public_id
 
-#     player_create = PlayerCreate(name="Name Surname", email=email, phone="11 1111 1111")
-#     await repo.create_player(player_create)
+    player_create = PlayerCreate(user_public_id=user_public_id, telegram_id=30304040)
 
-#     with pytest.raises(NotUniqueException) as e:
-#         player_create = PlayerCreate(name="Name Surname", email=email, phone="11 2222 2222")
-#         await repo.create_player(player_create)
+    await repo.create_player(player_create)
 
-#     assert e.value.detail == "Email already exists"
+    with pytest.raises(NotUniqueException) as e:
+        player_create = PlayerCreate(
+            user_public_id=duplicated_user_p_id, telegram_id=50509090
+        )
+        await repo.create_player(player_create)
+
+    assert e.value.detail == "User public id already exists."
