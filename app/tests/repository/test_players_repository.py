@@ -26,7 +26,7 @@ async def test_create_player(session: AsyncSession) -> None:
     assert player.time_availability is None
 
 
-async def test_create_player_email_already_exists_raises_exception(
+async def test_create_player_with_user_public_id_already_exists_raises_exception(
     session: AsyncSession,
 ) -> None:
     repo = PlayersRepository(session)
