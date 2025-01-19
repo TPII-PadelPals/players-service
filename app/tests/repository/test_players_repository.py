@@ -3,9 +3,9 @@ import uuid
 import pytest
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.models.player import PlayerCreate
+from app.models.player import PlayerCreate, PlayerUpdate
 from app.repository.players_repository import PlayersRepository
-from app.utilities.exceptions import NotUniqueException
+from app.utilities.exceptions import NotFoundException, NotUniqueException
 
 
 async def test_create_player(session: AsyncSession) -> None:
@@ -45,3 +45,42 @@ async def test_create_player_with_user_public_id_already_exists_raises_exception
         await repo.create_player(player_create)
 
     assert e.value.detail == "User public id already exists."
+
+
+async def test_update_player(session: AsyncSession) -> None:
+    user_public_id = str(uuid.uuid4())
+    telegram_id = 10103030
+
+    repo = PlayersRepository(session)
+    player_create = PlayerCreate(user_public_id=user_public_id, telegram_id=telegram_id)
+
+    player = await repo.create_player(player_create)
+
+    time_availability = 5
+
+    player_update = PlayerUpdate(time_availability=time_availability)
+
+    updated_player = await repo.update_player(player.user_public_id, player_update)
+
+    assert updated_player.user_public_id == player.user_public_id
+    assert updated_player.telegram_id == player.telegram_id
+    assert updated_player.time_availability == time_availability
+    assert updated_player.zone_km == player.zone_km
+    assert updated_player.zone_location == player.zone_location
+    assert updated_player.latitude == player.latitude
+    assert updated_player.longitude == player.longitude
+
+
+async def test_update_player_with_not_found_player_returns_exception(
+    session: AsyncSession,
+) -> None:
+    repo = PlayersRepository(session)
+
+    time_availability = 5
+    user_public_id_not_found = uuid.uuid4()
+
+    with pytest.raises(NotFoundException) as e:
+        player_update = PlayerUpdate(time_availability=time_availability)
+        await repo.update_player(user_public_id_not_found, player_update)
+
+    assert e.value.detail == "Player not found."
