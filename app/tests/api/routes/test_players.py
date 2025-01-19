@@ -77,3 +77,19 @@ async def test_update_player(
     assert content["zone_location"] is None
     assert content["latitude"] is None
     assert content["longitude"] is None
+
+
+async def test_update_player_not_found_returns_responds_404(
+    async_client: AsyncClient, x_api_key_header: dict[str, str]
+) -> None:
+    put_data = {"time_availability": 5}
+    response = await async_client.put(
+        f"{settings.API_V1_STR}/players/",
+        headers=x_api_key_header,
+        json=put_data,
+        params={"user_public_id": uuid.uuid4()},
+    )
+
+    assert response.status_code == 404
+    content = response.json()
+    assert content["detail"] == "Player not found."

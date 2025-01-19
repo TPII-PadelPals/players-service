@@ -5,7 +5,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.player import Player, PlayerCreate, PlayerUpdate
-from app.utilities.exceptions import NotUniqueException
+from app.utilities.exceptions import NotFoundException, NotUniqueException
 
 
 class PlayersRepository:
@@ -34,10 +34,8 @@ class PlayersRepository:
         query = select(Player).where(Player.user_public_id == user_public_id)
         result = await self.session.exec(query)
         player = result.first()
-        # if not item:
-        #     raise NotFoundException(player="Player")
-        # if item.owner_id != user_id:
-        #     raise NotEnoughPermissionsException()
+        if not player:
+            raise NotFoundException(item="Player")
         update_dict = player_in.model_dump(exclude_unset=True)
         player.sqlmodel_update(update_dict)
         self.session.add(player)
