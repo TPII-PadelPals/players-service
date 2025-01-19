@@ -11,3 +11,5 @@ ITEM_RESPONSES = {**ITEM_NOT_FOUND, **NOT_ENOUGH_PERMISSIONS}
 
 # Player responses
 POST_PLAYERS_RESPONSES = {status.HTTP_201_CREATED: {"description": "Player created"}}
+
+PLAYERS_PUT_RESPONSES = {status.HTTP_200_OK: {"description": "Player updated"}}

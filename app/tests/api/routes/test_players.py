@@ -1,6 +1,5 @@
 import uuid
 
-import pytest
 from httpx import AsyncClient
 
 from app.core.config import settings
@@ -48,7 +47,6 @@ async def test_create_player_user_public_id_already_exists_responds_409(
     assert content["detail"] == "User public id already exists."
 
 
-@pytest.mark.skip
 async def test_update_player(
     async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
@@ -61,12 +59,12 @@ async def test_update_player(
     )
     created_player = response_post.json()
 
-    put_data = {"time_availability": 1}
+    put_data = {"time_availability": 5}
     response = await async_client.put(
         f"{settings.API_V1_STR}/players/",
         headers=x_api_key_header,
         json=put_data,
-        params={"user_id": created_player["user_public_id"]},
+        params={"user_public_id": created_player["user_public_id"]},
     )
 
     assert response.status_code == 200

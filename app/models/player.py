@@ -18,6 +18,11 @@ class PlayerBase(PlayerCreate):
     time_availability: int | None = Field(default=None)
 
 
+# Properties to receive on item update
+class PlayerUpdate(SQLModel):
+    time_availability: int | None = Field(default=None)
+
+
 # Database model, database table inferred from class name
 class Player(PlayerBase, table=True):
     __tablename__ = "players"
