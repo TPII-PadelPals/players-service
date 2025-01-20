@@ -87,7 +87,7 @@ async def test_update_player_not_found_returns_responds_404(
         f"{settings.API_V1_STR}/players/",
         headers=x_api_key_header,
         json=put_data,
-        params={"user_public_id": uuid.uuid4()},
+        params={"user_public_id": str(uuid.uuid4())},
     )
 
     assert response.status_code == 404
