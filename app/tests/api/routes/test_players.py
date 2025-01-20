@@ -93,3 +93,55 @@ async def test_update_player_not_found_returns_responds_404(
     assert response.status_code == 404
     content = response.json()
     assert content["detail"] == "Player not found."
+
+
+async def test_update_player_with_time_availability_more_than_seven_responds_422(
+    async_client: AsyncClient, x_api_key_header: dict[str, str]
+) -> None:
+    user_public_id = str(uuid.uuid4())
+    telegram_id = 10103030
+
+    post_data = {"user_public_id": user_public_id, "telegram_id": telegram_id}
+    response_post = await async_client.post(
+        f"{settings.API_V1_STR}/players/", headers=x_api_key_header, json=post_data
+    )
+    _created_player = response_post.json()
+
+    put_data = {"time_availability": 8}
+    response = await async_client.put(
+        f"{settings.API_V1_STR}/players/",
+        headers=x_api_key_header,
+        json=put_data,
+        params={"user_public_id": user_public_id},
+    )
+
+    assert response.status_code == 422
+    content = response.json()
+    assert content["detail"][0]["loc"] == ["body", "time_availability"]
+    assert content["detail"][0]["msg"] == "Input should be less than or equal to 7"
+
+
+async def test_update_player_with_time_availability_less_than_1_responds_422(
+    async_client: AsyncClient, x_api_key_header: dict[str, str]
+) -> None:
+    user_public_id = str(uuid.uuid4())
+    telegram_id = 10103030
+
+    post_data = {"user_public_id": user_public_id, "telegram_id": telegram_id}
+    response_post = await async_client.post(
+        f"{settings.API_V1_STR}/players/", headers=x_api_key_header, json=post_data
+    )
+    _created_player = response_post.json()
+
+    put_data = {"time_availability": 0}
+    response = await async_client.put(
+        f"{settings.API_V1_STR}/players/",
+        headers=x_api_key_header,
+        json=put_data,
+        params={"user_public_id": user_public_id},
+    )
+
+    assert response.status_code == 422
+    content = response.json()
+    assert content["detail"][0]["loc"] == ["body", "time_availability"]
+    assert content["detail"][0]["msg"] == "Input should be greater than or equal to 1"

@@ -2,6 +2,9 @@ import uuid
 
 from sqlmodel import Field, Index, SQLModel
 
+MAX_TIME_AVAILABILITY = 7
+MIN_TIME_AVAILABILITY = 1
+
 
 # Properties to receive on player creation
 class PlayerCreate(SQLModel):
@@ -20,7 +23,9 @@ class PlayerBase(PlayerCreate):
 
 # Properties to receive on item update
 class PlayerUpdate(SQLModel):
-    time_availability: int | None = Field(default=None)
+    time_availability: int | None = Field(
+        default=None, ge=MIN_TIME_AVAILABILITY, le=MAX_TIME_AVAILABILITY
+    )
 
 
 # Database model, database table inferred from class name
