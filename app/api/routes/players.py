@@ -41,5 +41,4 @@ async def update_player(
     """
     Update a player.
     """
-    updated_player = await service.update_player(session, user_public_id, player_in)
-    return updated_player
+    return await service.update_player(session, user_public_id, player_in)
