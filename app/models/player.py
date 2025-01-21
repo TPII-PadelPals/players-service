@@ -1,9 +1,7 @@
 import uuid
+from typing import ClassVar
 
 from sqlmodel import Field, Index, SQLModel
-
-MAX_TIME_AVAILABILITY = 7
-MIN_TIME_AVAILABILITY = 1
 
 
 # Properties to receive on player creation
@@ -12,22 +10,22 @@ class PlayerCreate(SQLModel):
     telegram_id: int | None = Field(default=None)
 
 
+# Properties to receive on player update
+class PlayerUpdate(SQLModel):
+    MIN_TIME_AVAILABILITY: ClassVar[int] = 1
+    MAX_TIME_AVAILABILITY: ClassVar[int] = 7
+
+    time_availability: int | None = Field(
+        default=None, ge=MIN_TIME_AVAILABILITY, le=MAX_TIME_AVAILABILITY
+    )
+
+
 # Shared properties
-class PlayerBase(PlayerCreate):
+class PlayerBase(PlayerCreate, PlayerUpdate):
     zone_km: int | None = Field(default=None)
     zone_location: str | None = Field(default=None)
     latitude: float | None = Field(default=None)
     longitude: float | None = Field(default=None)
-    time_availability: int | None = Field(
-        default=None, ge=MIN_TIME_AVAILABILITY, le=MAX_TIME_AVAILABILITY
-    )
-
-
-# Properties to receive on item update
-class PlayerUpdate(SQLModel):
-    time_availability: int | None = Field(
-        default=None, ge=MIN_TIME_AVAILABILITY, le=MAX_TIME_AVAILABILITY
-    )
 
 
 # Database model, database table inferred from class name
