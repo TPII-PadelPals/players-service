@@ -18,7 +18,9 @@ class PlayerBase(PlayerCreate):
     zone_location: str | None = Field(default=None)
     latitude: float | None = Field(default=None)
     longitude: float | None = Field(default=None)
-    time_availability: int | None = Field(default=None)
+    time_availability: int | None = Field(
+        default=None, ge=MIN_TIME_AVAILABILITY, le=MAX_TIME_AVAILABILITY
+    )
 
 
 # Properties to receive on item update
