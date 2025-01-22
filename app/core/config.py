@@ -29,6 +29,9 @@ class Settings(BaseSettings):
     ITEMS_SERVICE_PORT: int | None = None
     ITEMS_SERVICE_API_KEY: str | None = None
 
+    # Testing
+    POSTGRES_DB_TESTING: str
+
     @computed_field  # type: ignore[prop-decorator]
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> MultiHostUrl:
@@ -52,7 +55,7 @@ class TestSettings(Settings):
             password=self.POSTGRES_PASSWORD,
             host=self.POSTGRES_SERVER,
             port=self.POSTGRES_PORT_EXT,
-            path=self.POSTGRES_DB + "_test",
+            path=self.POSTGRES_DB_TESTING,
         )
 
 

@@ -3,7 +3,7 @@ from fastapi import HTTPException, status
 
 class NotFoundException(HTTPException):
     def __init__(self, item: str) -> None:
-        detail = f"{item.capitalize()} not found"
+        detail = f"{item.capitalize()} not found."
         super().__init__(status_code=status.HTTP_404_NOT_FOUND, detail=detail)
 
 
@@ -19,3 +19,9 @@ class NotEnoughPermissionsException(HTTPException):
         super().__init__(
             status_code=status.HTTP_403_FORBIDDEN, detail="Not enough permissions"
         )
+
+
+class NotUniqueException(HTTPException):
+    def __init__(self, item: str) -> None:
+        detail = f"{item.capitalize()} already exists."
+        super().__init__(status_code=status.HTTP_409_CONFLICT, detail=detail)
