@@ -3,6 +3,7 @@ import uuid
 from httpx import AsyncClient
 
 from app.core.config import settings
+from app.utilities.exceptions import NotUniqueException
 
 
 async def test_create_player(
@@ -43,8 +44,13 @@ async def test_create_player_user_public_id_already_exists_responds_409(
         f"{settings.API_V1_STR}/players/", headers=x_api_key_header, json=data
     )
     assert response.status_code == 409
-    content = response.json()
-    assert content["detail"] == "User public id already exists."
+
+    response_detail = response.json().get("detail")
+    expected_detail = NotUniqueException("player").detail
+
+    assert (
+        response_detail == expected_detail
+    ), f"Expected '{expected_detail}' but got '{response_detail}'"
 
 
 async def test_update_player(

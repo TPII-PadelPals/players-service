@@ -44,7 +44,7 @@ async def test_create_player_with_user_public_id_already_exists_raises_exception
         )
         await repo.create_player(player_create)
 
-    assert e.value.detail == "User public id already exists."
+    assert e.value.detail == "Player already exists."
 
 
 async def test_update_player(session: AsyncSession) -> None:
