@@ -1,4 +1,4 @@
-import uuid
+from uuid import UUID
 
 from app.models.player import Player, PlayerCreate, PlayerUpdate
 from app.repository.players_repository import PlayersRepository
@@ -14,7 +14,13 @@ class PlayersService:
         return player
 
     async def update_player(
-        self, session: SessionDep, user_public_id: uuid.UUID, player_in: PlayerUpdate
+        self, session: SessionDep, user_public_id: UUID, player_in: PlayerUpdate
     ) -> Player:
         repo = PlayersRepository(session)
         return await repo.update_player(user_public_id, player_in)
+
+    async def read_player(
+        self, session: SessionDep, user_public_id: UUID
+    ) -> Player:
+        repo = PlayersRepository(session)
+        return await repo.read_player(user_public_id)

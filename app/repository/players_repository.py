@@ -1,4 +1,4 @@
-import uuid
+from uuid import UUID
 
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import select
@@ -30,7 +30,7 @@ class PlayersRepository:
         return player
 
     async def update_player(
-        self, user_public_id: uuid.UUID, player_in: PlayerUpdate
+        self, user_public_id: UUID, player_in: PlayerUpdate
     ) -> Player:
         query = select(Player).where(Player.user_public_id == user_public_id)
         result = await self.session.exec(query)
@@ -42,4 +42,12 @@ class PlayersRepository:
         self.session.add(player)
         await self.session.commit()
         await self.session.refresh(player)
+        return player
+
+    async def read_player(self, user_public_id: UUID) -> Player:
+        query = select(Player).where(Player.user_public_id == user_public_id)
+        result = await self.session.exec(query)
+        player = result.first()
+        if not player:
+            raise NotFoundException(item="Player")
         return player
