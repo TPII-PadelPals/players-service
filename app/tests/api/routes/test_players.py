@@ -3,6 +3,7 @@ import uuid
 from httpx import AsyncClient
 
 from app.core.config import settings
+from app.services.google_service import GoogleService
 from app.utilities.exceptions import NotUniqueException
 
 
@@ -53,7 +54,7 @@ async def test_create_player_user_public_id_already_exists_responds_409(
     ), f"Expected '{expected_detail}' but got '{response_detail}'"
 
 
-async def test_update_player(
+async def test_update_player_no_address(
     async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
     user_public_id = str(uuid.uuid4())
@@ -65,7 +66,12 @@ async def test_update_player(
     )
     created_player = response_post.json()
 
-    put_data = {"time_availability": 5}
+    put_data = {
+        "time_availability": 5,
+        "zone_km": 10,
+        "latitude": 0.10,
+        "longitude": 0.20,
+    }
     response = await async_client.put(
         f"{settings.API_V1_STR}/players/",
         headers=x_api_key_header,
@@ -79,10 +85,53 @@ async def test_update_player(
     assert content["user_public_id"] == created_player["user_public_id"]
     assert content["telegram_id"] == created_player["telegram_id"]
     assert content["time_availability"] == put_data["time_availability"]
-    assert content["zone_km"] is None
+    assert content["zone_km"] == put_data["zone_km"]
     assert content["zone_location"] is None
-    assert content["latitude"] is None
-    assert content["longitude"] is None
+    assert content["latitude"] == put_data["latitude"]
+    assert content["longitude"] == put_data["longitude"]
+
+
+async def test_update_player_with_address(
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
+) -> None:
+    GET_COORDS_RESULT = (0.4, 0.3)
+
+    async def mock_get_coordinates(_self, _: str):
+        return GET_COORDS_RESULT
+
+    monkeypatch.setattr(GoogleService, "get_coordinates", mock_get_coordinates)
+
+    user_public_id = str(uuid.uuid4())
+    telegram_id = 10103030
+
+    post_data = {"user_public_id": user_public_id, "telegram_id": telegram_id}
+    response_post = await async_client.post(
+        f"{settings.API_V1_STR}/players/", headers=x_api_key_header, json=post_data
+    )
+    created_player = response_post.json()
+
+    put_data = {
+        "time_availability": 5,
+        "zone_km": 10,
+        "zone_location": "Paseo Colón 850",
+    }
+    response = await async_client.put(
+        f"{settings.API_V1_STR}/players/",
+        headers=x_api_key_header,
+        json=put_data,
+        params={"user_public_id": created_player["user_public_id"]},
+    )
+
+    assert response.status_code == 200
+    content = response.json()
+
+    assert content["user_public_id"] == created_player["user_public_id"]
+    assert content["telegram_id"] == created_player["telegram_id"]
+    assert content["time_availability"] == put_data["time_availability"]
+    assert content["zone_km"] == put_data["zone_km"]
+    assert content["zone_location"] == put_data["zone_location"]
+    assert content["latitude"] == GET_COORDS_RESULT[1]
+    assert content["longitude"] == GET_COORDS_RESULT[0]
 
 
 async def test_update_player_not_found_returns_responds_404(
