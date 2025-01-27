@@ -6,7 +6,11 @@ from fastapi import APIRouter, status
 from app.models.player import PlayerCreate, PlayerPublic, PlayerUpdate
 from app.services.players_service import PlayersService
 from app.utilities.dependencies import SessionDep
-from app.utilities.messages import PLAYERS_POST_RESPONSES, PLAYERS_PUT_RESPONSES, PLAYERS_GET_RESPONSES
+from app.utilities.messages import (
+    PLAYERS_GET_RESPONSES,
+    PLAYERS_POST_RESPONSES,
+    PLAYERS_PUT_RESPONSES,
+)
 
 router = APIRouter()
 

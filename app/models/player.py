@@ -1,5 +1,5 @@
-from uuid import UUID
 from typing import ClassVar
+from uuid import UUID
 
 from sqlalchemy import UniqueConstraint
 from sqlmodel import Field, Index, SQLModel
