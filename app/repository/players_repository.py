@@ -32,11 +32,7 @@ class PlayersRepository:
     async def update_player(
         self, user_public_id: UUID, player_in: PlayerUpdate
     ) -> Player:
-        query = select(Player).where(Player.user_public_id == user_public_id)
-        result = await self.session.exec(query)
-        player = result.first()
-        if not player:
-            raise NotFoundException(item="Player")
+        player = await self.read_player(user_public_id=user_public_id)
         update_dict = player_in.model_dump(exclude_unset=True)
         player.sqlmodel_update(update_dict)
         self.session.add(player)
