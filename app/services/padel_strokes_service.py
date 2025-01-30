@@ -25,6 +25,15 @@ class PadelStrokesService:
         return await repo.create_padel_strokes(padel_stroke_in, user_public_id)
 
 
+    async def create_padel_stroke_empty(
+            self,
+            session: SessionDep,
+            user_public_id: uuid.UUID
+    ):
+        padel_stroke_in = PadelStrokeCreate()
+        return await self.create_padel_stroke(session, padel_stroke_in, user_public_id)
+
+
     async def update_padel_stroke(
             self,
             session: SessionDep,
