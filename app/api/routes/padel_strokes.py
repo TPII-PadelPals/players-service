@@ -13,19 +13,6 @@ router = APIRouter()
 service = PadelStrokesService()
 
 
-# @router.post(
-#     "/",
-#     response_model=PadelStrokePublic,
-#     status_code=status.HTTP_201_CREATED,
-#     responses={**PLAYERS_POST_RESPONSES},  # type: ignore[dict-item]
-# )
-# async def create_padel_stroke(*, session: SessionDep, padel_stroke_in: PadelStrokeCreate, user_public_id: uuid.UUID) -> Any:
-#     """
-#     Create new player.
-#     """
-#     return await service.create_padel_stroke(session, padel_stroke_in)
-
-
 @router.put(
     "/",
     response_model=PadelStrokePublic,
@@ -39,7 +26,7 @@ async def update_padel_stroke(
         padel_stroke_in: PadelStrokeUpdate,
 ) -> Any:
     """
-    Update a player.
+    Update a padel strokes.
     """
     return await service.update_padel_stroke(session, user_public_id, padel_stroke_in)
 
@@ -55,6 +42,6 @@ async def update_padel_stroke(
 )
 async def get_padel_strokes(*, session: SessionDep, user_public_id: uuid.UUID):
     """
-
+    Get a padel strokes.
     """
     return await service.get_padel_strokes(session, user_public_id)

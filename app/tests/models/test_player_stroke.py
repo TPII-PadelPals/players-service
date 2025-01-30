@@ -54,3 +54,8 @@ def test_generate_padel_strok_public():
             assert value == user_id
         else:
             assert value == DEFINITION_OF_CATEGORIZATION[0]
+
+
+def test_separation_of_values():
+    assert BASE_BEGINNER < BASE_INTERMEDIATE
+    assert BASE_INTERMEDIATE < BASE_ADVANCE
