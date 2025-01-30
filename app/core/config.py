@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
     API_KEY: str
+    GOOGLE_API_KEY: str
 
     # Services
     ITEMS_SERVICE_HOST: str
