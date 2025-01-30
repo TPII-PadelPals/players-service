@@ -9,7 +9,12 @@ class PadelStrokesService:
         pass
 
 
-    async def create_padel_stroke(self, session: SessionDep, padel_stroke_in: PadelStrokeCreate):
+    async def create_padel_stroke(
+            self,
+            session: SessionDep,
+            padel_stroke_in: PadelStrokeCreate,
+            user_public_id: uuid.UUID
+    ):
         pass
 
 
