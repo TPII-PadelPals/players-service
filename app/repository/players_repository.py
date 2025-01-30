@@ -32,7 +32,7 @@ class PlayersRepository:
     async def update_player(
         self, user_public_id: UUID, player_in: PlayerUpdate
     ) -> Player:
-        player = await self.read_player(user_public_id=user_public_id)
+        player = await self.get_player_by_user_public_id(user_public_id=user_public_id)
         update_dict = player_in.model_dump(exclude_unset=True)
         player.sqlmodel_update(update_dict)
         self.session.add(player)
@@ -40,7 +40,7 @@ class PlayersRepository:
         await self.session.refresh(player)
         return player
 
-    async def read_player(self, user_public_id: UUID) -> Player:
+    async def get_player_by_user_public_id(self, user_public_id: UUID) -> Player:
         query = select(Player).where(Player.user_public_id == user_public_id)
         result = await self.session.exec(query)
         player = result.first()

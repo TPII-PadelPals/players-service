@@ -27,4 +27,4 @@ class PlayersService:
 
     async def read_player(self, session: SessionDep, user_public_id: UUID) -> Player:
         repo = PlayersRepository(session)
-        return await repo.read_player(user_public_id)
+        return await repo.get_player_by_user_public_id(user_public_id)
