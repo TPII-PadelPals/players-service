@@ -6,6 +6,7 @@ from app.models.padel_stroke import PadelStrokeCreate, DEFINITION_OF_CATEGORIZAT
     BASE_BEGINNER
 from app.repository.padel_strokes_repository import PadelStrokesRepository
 from app.services.padel_strokes_service import PadelStrokesService
+from app.utilities.exceptions import NotFoundException
 
 
 async def test_create_padel_strokes(session: AsyncSession) -> None:
@@ -46,6 +47,47 @@ async def test_get_padel_strokes(session: AsyncSession) -> None:
         if field == "backhand_volley":
             assert value == DEFINITION_OF_CATEGORIZATION[2]
         elif field == "background_ground":
+            assert value == DEFINITION_OF_CATEGORIZATION[1]
+        elif field == "user_public_id":
+            assert value == user_public_id
+        else:
+            assert value == DEFINITION_OF_CATEGORIZATION[0]
+
+
+async def test_get_padel_strokes_empty(session: AsyncSession) -> None:
+    user_public_id = uuid.uuid4()
+    repo = PadelStrokesRepository(session)
+    # test
+    try:
+        _result = await repo.get_padel_strokes(user_public_id)
+        raise AssertionError
+    # assert
+    except NotFoundException as error:
+        assert error.detail == "Padel strokes not found."
+    except Exception:
+        raise AssertionError
+
+
+
+
+async def test_update_padel_strokes(session: AsyncSession) -> None:
+    user_public_id = uuid.uuid4()
+    service = PadelStrokesService()
+    repo = PadelStrokesRepository(session)
+    info_create = PadelStrokeCreate(background_ground=DEFINITION_OF_CATEGORIZATION[1], backhand_volley=DEFINITION_OF_CATEGORIZATION[2])
+    _stroke = await service.create_padel_stroke(session, info_create, user_public_id)
+    update_info = PadelStrokeCreate(background_ground=DEFINITION_OF_CATEGORIZATION[2], forehand_ground=DEFINITION_OF_CATEGORIZATION[1])
+    # test
+    result = await repo.update_padel_strokes(update_info, user_public_id)
+    # assert
+    assert result is not None
+    for field in result.__dict__:
+        value = getattr(result, field, None)
+        if field[0] == "_":
+            continue
+        if field == "backhand_volley" or field == "background_ground":
+            assert value == DEFINITION_OF_CATEGORIZATION[2]
+        elif field == "forehand_ground":
             assert value == DEFINITION_OF_CATEGORIZATION[1]
         elif field == "user_public_id":
             assert value == user_public_id

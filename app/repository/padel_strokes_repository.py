@@ -16,7 +16,7 @@ class PadelStrokesRepository:
         result = await self.session.exec(query)
         strokes: PadelStroke = result.first()
         if not strokes:
-            raise NotFoundException(item="Padel strokes not found")
+            raise NotFoundException(item="Padel strokes")
         return strokes.generate_padel_strok_public()
 
 
@@ -27,3 +27,16 @@ class PadelStrokesRepository:
         await self.session.commit()
         await self.session.refresh(stroke)
         return stroke
+
+
+    async def update_padel_strokes(self, padel_stroke_in: PadelStrokeCreate, user_public_id: uuid.UUID) -> PadelStrokePublic:
+        query = select(PadelStroke).where(PadelStroke.user_public_id == user_public_id)
+        result = await self.session.exec(query)
+        strokes: PadelStroke = result.first()
+        if not strokes:
+            raise NotFoundException(item="Padel strokes")
+        strokes.update_from_paddle_stroke_create(padel_stroke_in)
+        self.session.add(strokes)
+        await self.session.commit()
+        await self.session.refresh(strokes)
+        return strokes.generate_padel_strok_public()

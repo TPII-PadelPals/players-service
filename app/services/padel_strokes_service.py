@@ -31,4 +31,5 @@ class PadelStrokesService:
             user_public_id: uuid.UUID,
             padel_stroke_in: PadelStrokeUpdate,
     ):
-        pass
+        repo = PadelStrokesRepository(session)
+        return await repo.update_padel_strokes(padel_stroke_in, user_public_id)
