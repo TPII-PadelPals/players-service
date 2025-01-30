@@ -1,5 +1,7 @@
 from fastapi import status
 
+from app.utilities.exceptions import ExternalServiceException
+
 # Common responses
 NOT_ENOUGH_PERMISSIONS = {
     status.HTTP_403_FORBIDDEN: {"description": "Not enough permissions"}
@@ -21,8 +23,34 @@ PLAYERS_POST_RESPONSES = {
 
 PLAYER_NOT_FOUND = {status.HTTP_404_NOT_FOUND: {"description": "Player not found."}}
 
+PLAYERS_PUT_500_RESPONSES = {
+    "description": "",
+    "content": {
+        "application/json": {
+            "examples": {
+                "Google invalid address": {
+                    "value": {
+                        "detail": ExternalServiceException(
+                            service_name="google-address", detail="Invalid location"
+                        ).detail,
+                    },
+                },
+                "Google failed to fetch": {
+                    "value": {
+                        "detail": ExternalServiceException(
+                            service_name="google-address",
+                            detail="Failed to fetch coordinates from Google",
+                        ).detail,
+                    },
+                },
+            }
+        }
+    },
+}
+
 PLAYERS_PUT_RESPONSES = {
     status.HTTP_200_OK: {"description": "Player updated"},
+    status.HTTP_500_INTERNAL_SERVER_ERROR: PLAYERS_PUT_500_RESPONSES,
     **PLAYER_NOT_FOUND,
 }
 
