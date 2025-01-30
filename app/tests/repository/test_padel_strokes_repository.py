@@ -1,13 +1,11 @@
 import uuid
 
-import pytest
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.padel_stroke import PadelStrokeCreate, DEFINITION_OF_CATEGORIZATION, BASE_ADVANCE, BASE_INTERMEDIATE, \
     BASE_BEGINNER
 from app.repository.padel_strokes_repository import PadelStrokesRepository
 from app.services.padel_strokes_service import PadelStrokesService
-from app.utilities.exceptions import NotFoundException, NotUniqueException
 
 
 async def test_create_padel_strokes(session: AsyncSession) -> None:
@@ -36,7 +34,7 @@ async def test_get_padel_strokes(session: AsyncSession) -> None:
     service = PadelStrokesService()
     repo = PadelStrokesRepository(session)
     info_create = PadelStrokeCreate(background_ground=DEFINITION_OF_CATEGORIZATION[1], backhand_volley=DEFINITION_OF_CATEGORIZATION[2])
-    stroke = await service.create_padel_stroke(session, info_create, user_public_id)
+    _stroke = await service.create_padel_stroke(session, info_create, user_public_id)
     # test
     result = await repo.get_padel_strokes(user_public_id)
     # assert
