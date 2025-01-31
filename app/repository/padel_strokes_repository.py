@@ -1,14 +1,23 @@
 import uuid
 
+from sqlalchemy.exc import IntegrityError
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from app.models.padel_stroke import PadelStroke, PadelStrokePublic, PadelStrokeCreate
-from app.utilities.exceptions import NotFoundException
+from app.utilities.exceptions import NotFoundException, NotUniqueException
 
 
 class PadelStrokesRepository:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
+
+
+    async def _commit_with_exception_handling(self):
+        try:
+            await self.session.commit()
+        except IntegrityError as e:
+            await self.session.rollback()
+            raise NotUniqueException("Padel strokes")
 
 
     async def get_padel_strokes(self, user_public_id: uuid.UUID) -> PadelStrokePublic:
@@ -24,7 +33,7 @@ class PadelStrokesRepository:
         stroke_to_valid = padel_stroke_in.create_padel_stroke_skill(user_public_id)
         stroke = PadelStroke.model_validate(stroke_to_valid)
         self.session.add(stroke)
-        await self.session.commit()
+        await self._commit_with_exception_handling()
         await self.session.refresh(stroke)
         return stroke
 
