@@ -1,5 +1,3 @@
-import copy
-import uuid
 from uuid import UUID
 
 from app.models.player import Player, PlayerCreate, PlayerUpdate
