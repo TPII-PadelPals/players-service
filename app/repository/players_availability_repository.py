@@ -1,6 +1,5 @@
 from uuid import UUID
 
-from sqlalchemy.exc import IntegrityError
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.player_availability import (
@@ -8,22 +7,12 @@ from app.models.player_availability import (
     PlayerAvailabilityCreate,
     PlayerAvailabilityPublic,
 )
-from app.utilities.exceptions import NotUniqueException
+from app.repository.players_utils import PlayersUtils
 
 
 class PlayersAvailabilityRepository:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
-
-    async def _commit_with_exception_handling(self):
-        try:
-            await self.session.commit()
-        except IntegrityError as e:
-            await self.session.rollback()
-            if "uq_player_availability_constraint" in str(e.orig):
-                raise NotUniqueException("player availability")
-            else:
-                raise e
 
     async def create_player_availability(
         self, user_public_id: UUID, player_availability_in: PlayerAvailabilityCreate
@@ -38,7 +27,10 @@ class PlayersAvailabilityRepository:
             )
             availability_day in player_availability_create.available_days and player_availability.set_available()
             self.session.add(player_availability)
-        await self._commit_with_exception_handling()
+        await PlayersUtils(self.session).commit_with_exception_handling(
+            constraint_name="uq_player_availability_constraint",
+            class_name="player availability",
+        )
         return PlayerAvailabilityPublic(
             user_public_id=user_public_id, available_days=available_days
         )
