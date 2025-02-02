@@ -36,7 +36,7 @@ class PlayerAvailability(
     )
 
     def set_available(self):
-        self.week_day = True
+        self.is_available = True
 
 
 # Properties to return via API, id is always required

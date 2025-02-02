@@ -33,18 +33,10 @@ class PlayersAvailabilityRepository:
         )
         available_days = player_availability_create.available_days
         for availability_day in range(1, 8):
-            if availability_day in player_availability_create.available_days:
-                player_availability = PlayerAvailability(
-                    user_public_id=user_public_id,
-                    week_day=availability_day,
-                    is_available=True,
-                )
-            else:
-                player_availability = PlayerAvailability(
-                    user_public_id=user_public_id,
-                    week_day=availability_day,
-                    is_available=False,
-                )
+            player_availability = PlayerAvailability(
+                user_public_id=user_public_id, week_day=availability_day
+            )
+            availability_day in player_availability_create.available_days and player_availability.set_available()
             self.session.add(player_availability)
         await self._commit_with_exception_handling()
         return PlayerAvailabilityPublic(
