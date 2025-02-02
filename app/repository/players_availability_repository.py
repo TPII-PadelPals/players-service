@@ -21,7 +21,9 @@ class PlayersAvailabilityRepository:
             player_availability_in
         )
         available_days = player_availability_create.available_days
-        for availability_day in range(1, 8):
+        begin_day = PlayerAvailability.get_begin_day()
+        last_day = PlayerAvailability.get_last_day()
+        for availability_day in range(begin_day, last_day + 1):
             player_availability = PlayerAvailability(
                 user_public_id=user_public_id, week_day=availability_day
             )

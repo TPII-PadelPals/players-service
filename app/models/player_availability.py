@@ -1,3 +1,4 @@
+from typing import ClassVar
 from uuid import UUID
 
 from sqlalchemy import UniqueConstraint
@@ -6,8 +7,19 @@ from sqlmodel import Field, Index, SQLModel
 
 # Shared properties
 class PlayerAvailabilityBase(SQLModel):
+    _BEGIN_DAY: ClassVar[int] = 1
+    _LAST_DAY: ClassVar[int] = 7
+
     week_day: int = Field(default=None)
     is_available: bool = Field(default=False)
+
+    @classmethod
+    def get_begin_day(cls) -> int:
+        return cls._BEGIN_DAY
+
+    @classmethod
+    def get_last_day(cls) -> int:
+        return cls._LAST_DAY
 
 
 # Shared private properties
