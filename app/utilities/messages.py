@@ -13,7 +13,7 @@ ITEM_RESPONSES = {**ITEM_NOT_FOUND, **NOT_ENOUGH_PERMISSIONS}
 
 # Player responses
 PLAYER_ALREADY_EXISTS = {
-    status.HTTP_409_CONFLICT: {"description": "User public id already exists."}
+    status.HTTP_409_CONFLICT: {"description": "Player already exists"}
 }
 
 PLAYERS_POST_RESPONSES = {
@@ -57,7 +57,11 @@ PLAYERS_PUT_RESPONSES = {
 PLAYERS_GET_RESPONSES = {**PLAYER_NOT_FOUND}
 
 
+PLAYER_AVAILABILITY_ALREADY_EXISTS = {
+    status.HTTP_409_CONFLICT: {"description": "Player availability already exists."}
+}
+
 PLAYERS_AVAILABILITY_POST_RESPONSES = {
     status.HTTP_201_CREATED: {"description": "Player created"},
-    **PLAYER_ALREADY_EXISTS,
+    **PLAYER_AVAILABILITY_ALREADY_EXISTS,
 }
