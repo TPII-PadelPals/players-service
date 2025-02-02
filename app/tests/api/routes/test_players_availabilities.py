@@ -3,8 +3,7 @@ import uuid
 from httpx import AsyncClient
 
 from app.core.config import settings
-
-# from app.utilities.exceptions import NotUniqueException
+from app.utilities.exceptions import NotUniqueException
 
 
 async def test_create_player_available_days(
@@ -25,3 +24,33 @@ async def test_create_player_available_days(
 
     assert content["user_public_id"] == user_public_id
     assert content["available_days"] == available_days
+
+
+async def test_create_player_available_days_user_public_id_already_exists_responds_409(
+    async_client: AsyncClient, x_api_key_header: dict[str, str]
+) -> None:
+    user_public_id = str(uuid.uuid4())
+    available_days = [1, 2, 3]
+
+    data = {"available_days": available_days}
+
+    await async_client.post(
+        f"{settings.API_V1_STR}/players/{user_public_id}/availability",
+        headers=x_api_key_header,
+        json=data,
+    )
+
+    response = await async_client.post(
+        f"{settings.API_V1_STR}/players/{user_public_id}/availability",
+        headers=x_api_key_header,
+        json=data,
+    )
+
+    assert response.status_code == 409
+
+    response_detail = response.json().get("detail")
+    expected_detail = NotUniqueException("player availability").detail
+
+    assert (
+        response_detail == expected_detail
+    ), f"Expected '{expected_detail}' but got '{response_detail}'"

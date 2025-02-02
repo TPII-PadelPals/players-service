@@ -1,12 +1,13 @@
 from uuid import UUID
 
+from sqlalchemy import UniqueConstraint
 from sqlmodel import Field, Index, SQLModel
 
 
 # Shared properties
 class PlayerAvailabilityBase(SQLModel):
-    week_day: int | None = Field(default=None)
-    is_available: bool | None = Field(default=None)
+    week_day: int = Field(default=None)
+    is_available: bool = Field(default=False)
 
 
 # Shared private properties
@@ -29,8 +30,13 @@ class PlayerAvailability(
 
     __table_args__ = (
         Index(f"idx{__tablename__}", "user_public_id"),
-        # UniqueConstraint("user_public_id", name="uq_player_constraint"),
+        UniqueConstraint(
+            "user_public_id", "week_day", name="uq_player_availability_constraint"
+        ),
     )
+
+    def set_available(self):
+        self.week_day = True
 
 
 # Properties to return via API, id is always required
