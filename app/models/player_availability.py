@@ -30,7 +30,6 @@ class PlayerAvailabilityImmutable(SQLModel):
 # Properties to receive on player creation
 class PlayerAvailabilityCreate(SQLModel):
     available_days: list[int] = Field()
-    pass
 
 
 # Database model, database table inferred from class name
