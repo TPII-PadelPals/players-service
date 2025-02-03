@@ -4,8 +4,8 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.player import Player, PlayerCreate, PlayerUpdate
-from app.repository.players_utils import PlayersUtils
 from app.utilities.exceptions import NotFoundException
+from app.utilities.repository.players_utils import PlayersUtils
 
 
 class PlayersRepository:

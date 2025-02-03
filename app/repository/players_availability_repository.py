@@ -7,7 +7,7 @@ from app.models.player_availability import (
     PlayerAvailabilityCreate,
     PlayerAvailabilityPublic,
 )
-from app.repository.players_utils import PlayersUtils
+from app.utilities.repository.players_utils import PlayersUtils
 
 
 class PlayersAvailabilityRepository:
