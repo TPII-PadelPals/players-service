@@ -3,11 +3,10 @@ import uuid
 from httpx import AsyncClient
 
 from app.core.config import settings
-from app.models.padel_stroke import DEFINITION_OF_CATEGORIZATION
-from app.services.padel_strokes_service import PadelStrokesService
+from app.models.strokes import DEFINITION_OF_CATEGORIZATION
 
 
-async def test_create_player_create_stroke_associated(
+async def test_create_player_create_strokes_associated(
         async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
     user_public_id = uuid.uuid4()
@@ -24,7 +23,7 @@ async def test_create_player_create_stroke_associated(
 
     # test
     response_stroke = await async_client.get(
-        f"{settings.API_V1_STR}/padel-strokes/", headers=x_api_key_header, params={"user_public_id": user_public_id_str},
+        f"{settings.API_V1_STR}/strokes/", headers=x_api_key_header, params={"user_public_id": user_public_id_str},
     )
     # assert
     assert response_stroke.status_code == 200
@@ -36,7 +35,7 @@ async def test_create_player_create_stroke_associated(
         else:
             assert value == DEFINITION_OF_CATEGORIZATION[0]
 
-async def test_update_stroke(
+async def test_update_strokes(
         async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
     user_public_id = uuid.uuid4()
@@ -62,7 +61,7 @@ async def test_update_stroke(
     }
     # test
     response = await async_client.put(
-        f"{settings.API_V1_STR}/padel-strokes/", headers=x_api_key_header, params={"user_public_id": user_public_id_str}, json=data
+        f"{settings.API_V1_STR}/strokes/", headers=x_api_key_header, params={"user_public_id": user_public_id_str}, json=data
     )
     # assert
     assert response.status_code == 200

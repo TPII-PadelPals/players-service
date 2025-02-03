@@ -1,13 +1,12 @@
 import uuid
-from app.models.padel_stroke import PadelStrokeCreate, DEFINITION_OF_CATEGORIZATION, BASE_ADVANCE, BASE_BEGINNER, \
-    BASE_INTERMEDIATE, PadelStroke
+from app.models.strokes import StrokeCreate, DEFINITION_OF_CATEGORIZATION, BASE_ADVANCE, BASE_BEGINNER, BASE_INTERMEDIATE, Stroke
 
 
-def test_create_padel_stroke_skill():
+def test_create_strokes():
     user_id = uuid.uuid4()
-    create = PadelStrokeCreate(serve=DEFINITION_OF_CATEGORIZATION[2])
+    create = StrokeCreate(serve=DEFINITION_OF_CATEGORIZATION[2])
     # test
-    result = create.create_padel_stroke_skill(user_id)
+    result = create.create_stroke_skill(user_id)
     # assert
     for field in result.__dict__:
         value = getattr(result, field, None)
@@ -26,21 +25,21 @@ def test_skill_categorization_value():
     test_advancance = int(BASE_ADVANCE)
     for i in range(-10, test_intermediate):
         skill_value: float = i / 10.0
-        assert PadelStroke.skill_categorization_value(skill_value) == 0
+        assert Stroke.skill_categorization_value(skill_value) == 0
     for i in range(10 * test_intermediate, 10 * test_advancance):
         skill_value: float = i / 10.0
-        assert PadelStroke.skill_categorization_value(skill_value) == 1
+        assert Stroke.skill_categorization_value(skill_value) == 1
     for i in range(10 * test_advancance, 10 * (test_advancance + 1)):
         skill_value: float = i / 10.0
-        assert PadelStroke.skill_categorization_value(skill_value) == 2
+        assert Stroke.skill_categorization_value(skill_value) == 2
 
 
 def test_generate_padel_strok_public():
     user_id = uuid.uuid4()
-    create = PadelStrokeCreate(serve=DEFINITION_OF_CATEGORIZATION[2], backhand_double_walls=DEFINITION_OF_CATEGORIZATION[1])
-    stroke = create.create_padel_stroke_skill(user_id)
+    create = StrokeCreate(serve=DEFINITION_OF_CATEGORIZATION[2], backhand_double_walls=DEFINITION_OF_CATEGORIZATION[1])
+    stroke = create.create_stroke_skill(user_id)
     # test
-    result = stroke.generate_padel_strok_public()
+    result = stroke.generate_stroke_public()
     # assert
     for field in result.__dict__:
         value = getattr(result, field, None)

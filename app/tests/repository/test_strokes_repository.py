@@ -1,20 +1,20 @@
 import uuid
 
+import pytest
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.models.padel_stroke import PadelStrokeCreate, DEFINITION_OF_CATEGORIZATION, BASE_ADVANCE, BASE_INTERMEDIATE, \
-    BASE_BEGINNER
-from app.repository.padel_strokes_repository import PadelStrokesRepository
-from app.services.padel_strokes_service import PadelStrokesService
+from app.models.strokes import StrokeCreate, DEFINITION_OF_CATEGORIZATION, BASE_ADVANCE, BASE_INTERMEDIATE, BASE_BEGINNER
+from app.repository.strokes_repository import StrokesRepository
+from app.services.strokes_service import StrokesService
 from app.utilities.exceptions import NotFoundException
 
 
-async def test_create_padel_strokes(session: AsyncSession) -> None:
+async def test_create_strokes(session: AsyncSession) -> None:
     user_public_id = uuid.uuid4()
-    repo = PadelStrokesRepository(session)
-    info_create = PadelStrokeCreate(background_ground=DEFINITION_OF_CATEGORIZATION[1], backhand_volley=DEFINITION_OF_CATEGORIZATION[2])
+    repo = StrokesRepository(session)
+    info_create = StrokeCreate(background_ground=DEFINITION_OF_CATEGORIZATION[1], backhand_volley=DEFINITION_OF_CATEGORIZATION[2])
     # test
-    result = await repo.create_padel_strokes(info_create, user_public_id)
+    result = await repo.create_stroke(info_create, user_public_id)
     # assert
     for field in result.__dict__:
         value = getattr(result, field, None)
@@ -30,14 +30,14 @@ async def test_create_padel_strokes(session: AsyncSession) -> None:
             assert value == BASE_BEGINNER
 
 
-async def test_get_padel_strokes(session: AsyncSession) -> None:
+async def test_get_strokes(session: AsyncSession) -> None:
     user_public_id = uuid.uuid4()
-    service = PadelStrokesService()
-    repo = PadelStrokesRepository(session)
-    info_create = PadelStrokeCreate(background_ground=DEFINITION_OF_CATEGORIZATION[1], backhand_volley=DEFINITION_OF_CATEGORIZATION[2])
+    service = StrokesService()
+    repo = StrokesRepository(session)
+    info_create = StrokeCreate(background_ground=DEFINITION_OF_CATEGORIZATION[1], backhand_volley=DEFINITION_OF_CATEGORIZATION[2])
     _stroke = await service.create_padel_stroke(session, info_create, user_public_id)
     # test
-    result = await repo.get_padel_strokes(user_public_id)
+    result = await repo.get_strokes(user_public_id)
     # assert
     assert result is not None
     for field in result.__dict__:
@@ -54,31 +54,33 @@ async def test_get_padel_strokes(session: AsyncSession) -> None:
             assert value == DEFINITION_OF_CATEGORIZATION[0]
 
 
-async def test_get_padel_strokes_empty(session: AsyncSession) -> None:
+async def test_get_strokes_raises_exception_if_associated_player_not_exists(session: AsyncSession) -> None:
     user_public_id = uuid.uuid4()
-    repo = PadelStrokesRepository(session)
+    repo = StrokesRepository(session)
     # test
-    try:
-        _result = await repo.get_padel_strokes(user_public_id)
-        raise AssertionError
-    # assert
-    except NotFoundException as error:
-        assert error.detail == "Padel strokes not found."
-    except Exception:
-        raise AssertionError
-
+    # try:
+    #     _result = await repo.get_strokes(user_public_id)
+    #     raise AssertionError
+    # # assert
+    # except NotFoundException as error:
+    #     assert error.detail == "Padel strokes not found."
+    # except Exception:
+    #     raise AssertionError
+    with pytest.raises(NotFoundException ) as e:
+        await repo.get_strokes(user_public_id)
+    assert e.value.detail == "Padel strokes not found."
 
 
 
 async def test_update_padel_strokes(session: AsyncSession) -> None:
     user_public_id = uuid.uuid4()
-    service = PadelStrokesService()
-    repo = PadelStrokesRepository(session)
-    info_create = PadelStrokeCreate(background_ground=DEFINITION_OF_CATEGORIZATION[1], backhand_volley=DEFINITION_OF_CATEGORIZATION[2])
+    service = StrokesService()
+    repo = StrokesRepository(session)
+    info_create = StrokeCreate(background_ground=DEFINITION_OF_CATEGORIZATION[1], backhand_volley=DEFINITION_OF_CATEGORIZATION[2])
     _stroke = await service.create_padel_stroke(session, info_create, user_public_id)
-    update_info = PadelStrokeCreate(background_ground=DEFINITION_OF_CATEGORIZATION[2], forehand_ground=DEFINITION_OF_CATEGORIZATION[1])
+    update_info = StrokeCreate(background_ground=DEFINITION_OF_CATEGORIZATION[2], forehand_ground=DEFINITION_OF_CATEGORIZATION[1])
     # test
-    result = await repo.update_padel_strokes(update_info, user_public_id)
+    result = await repo.update_strokes(update_info, user_public_id)
     # assert
     assert result is not None
     for field in result.__dict__:

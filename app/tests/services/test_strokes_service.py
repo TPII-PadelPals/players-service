@@ -2,20 +2,21 @@ import uuid
 
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.models.padel_stroke import DEFINITION_OF_CATEGORIZATION, BASE_SKILL_NEW
+from app.models.strokes import DEFINITION_OF_CATEGORIZATION, BASE_SKILL_NEW
 from app.models.player import PlayerCreate
-from app.services.padel_strokes_service import PadelStrokesService
+from app.services.strokes_service import StrokesService
 from app.services.players_service import PlayersService
 
 
-async def test_create_padel_stroke_empty(session: AsyncSession) -> None:
+async def test_create_strokes_defaults_to_beginner_base_level(session: AsyncSession) -> None:
     user_public_id = uuid.uuid4()
-    service = PadelStrokesService()
+    service = StrokesService()
     # test
-    empty_stroke = await service.create_padel_stroke_empty(session, user_public_id)
+    info_strokes = None
+    stroke = await service.create_padel_stroke(session, info_strokes, user_public_id)
     # assert
-    for field in empty_stroke.__dict__:
-        value = getattr(empty_stroke, field, None)
+    for field in stroke.__dict__:
+        value = getattr(stroke, field, None)
         if field[0] == "_":
             continue
         elif field == "user_public_id":
@@ -24,15 +25,16 @@ async def test_create_padel_stroke_empty(session: AsyncSession) -> None:
             assert value == BASE_SKILL_NEW
 
 
-async def test_create_and_get_padel_stroke_empty(session: AsyncSession) -> None:
+async def test_create_and_get_strokes(session: AsyncSession) -> None:
     user_public_id = uuid.uuid4()
-    service = PadelStrokesService()
-    _ = await service.create_padel_stroke_empty(session, user_public_id)
+    service = StrokesService()
+    info_strokes = None
+    _ = await service.create_padel_stroke(session, info_strokes, user_public_id)
     # test
-    empty_stroke = await service.get_padel_strokes(session, user_public_id)
+    stroke = await service.get_strokes(session, user_public_id)
     # assert
-    for field in empty_stroke.__dict__:
-        value = getattr(empty_stroke, field, None)
+    for field in stroke.__dict__:
+        value = getattr(stroke, field, None)
         if field[0] == "_":
             continue
         elif field == "user_public_id":
@@ -45,15 +47,15 @@ async def test_generate_strokes_whit_player(session: AsyncSession) -> None:
     user_public_id = uuid.uuid4()
     telegram_id = 10103030
 
-    stroke_service = PadelStrokesService()
+    strokes_service = StrokesService()
     player_service = PlayersService()
     player_create = PlayerCreate(user_public_id=str(user_public_id), telegram_id=telegram_id)
     # test
     _player = await player_service.create_player(session, player_create)
-    empty_stroke = await stroke_service.get_padel_strokes(session, user_public_id)
+    strokes = await strokes_service.get_strokes(session, user_public_id)
     # assert
-    for field in empty_stroke.__dict__:
-        value = getattr(empty_stroke, field, None)
+    for field in strokes.__dict__:
+        value = getattr(strokes, field, None)
         if field[0] == "_":
             continue
         elif field == "user_public_id":
