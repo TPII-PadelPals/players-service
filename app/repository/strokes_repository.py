@@ -12,12 +12,12 @@ class StrokesRepository:
         self.session = session
 
 
-    async def _commit_with_exception_handling(self):
-        try:
-            await self.session.commit()
-        except IntegrityError as e:
-            await self.session.rollback()
-            raise NotUniqueException("Padel strokes")
+    # async def _commit_with_exception_handling(self):
+    #     try:
+    #         await self.session.commit()
+    #     except IntegrityError as e:
+    #         await self.session.rollback()
+    #         raise NotUniqueException("Padel strokes")
 
 
     async def get_strokes(self, user_public_id: uuid.UUID) -> StrokePublic:
@@ -33,8 +33,8 @@ class StrokesRepository:
         stroke_to_valid = stroke_in.create_stroke_skill(user_public_id)
         stroke = Stroke.model_validate(stroke_to_valid)
         self.session.add(stroke)
-        await self._commit_with_exception_handling()
-        await self.session.refresh(stroke)
+        # await self._commit_with_exception_handling()
+        # await self.session.refresh(stroke)
         return stroke
 
 

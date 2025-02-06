@@ -13,15 +13,16 @@ class PlayersService:
     async def create_player(
         self, session: SessionDep, player_in: PlayerCreate
     ) -> Player:
-        auxiliary_service_strokes = StrokesService()
+        # auxiliary_service_strokes = StrokesService()
         repo = PlayersRepository(session)
-        try:
-            _stroke = await auxiliary_service_strokes.create_padel_stroke(session, None, player_in.user_public_id)
-        except NotUniqueException:
-            raise NotUniqueException("player")
-        except Exception as e:
-            raise e
+        # try:
+        #     _stroke = await auxiliary_service_strokes.create_padel_stroke(session, None, player_in.user_public_id)
+        # except NotUniqueException:
+        #     raise NotUniqueException("player")
+        # except Exception as e:
+        #     raise e
         player = await repo.create_player(player_in)
+        # session.close()
         return player
 
     async def update_player(
