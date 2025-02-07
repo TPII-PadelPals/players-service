@@ -35,7 +35,7 @@ class StrokeBase(SQLModel):
 
 # Shared private properties
 class StrokeImmutable(SQLModel):
-    user_public_id: uuid.UUID = Field()
+    user_public_id: uuid.UUID = Field(foreign_key="players.user_public_id")
 
 
 # Properties to receive on item creation
