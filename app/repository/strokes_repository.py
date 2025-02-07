@@ -11,13 +11,13 @@ class StrokesRepository:
         self.session = session
 
 
-    async def get_strokes(self, user_public_id: uuid.UUID) -> StrokePublic:
+    async def get_strokes(self, user_public_id: uuid.UUID) -> Stroke:
         query = select(Stroke).where(Stroke.user_public_id == user_public_id)
         result = await self.session.exec(query)
         strokes: Stroke = result.first()
         if not strokes:
             raise NotFoundException(item="Padel strokes")
-        return strokes.generate_stroke_public()
+        return strokes
 
 
     async def create_stroke(self, stroke_in: StrokeCreate, user_public_id: uuid.UUID) -> Stroke:
@@ -27,7 +27,7 @@ class StrokesRepository:
         return stroke
 
 
-    async def update_strokes(self, stroke_in: StrokeCreate, user_public_id: uuid.UUID) -> StrokePublic:
+    async def update_strokes(self, stroke_in: StrokeCreate, user_public_id: uuid.UUID) -> Stroke:
         query = select(Stroke).where(Stroke.user_public_id == user_public_id)
         result = await self.session.exec(query)
         strokes: Stroke = result.first()
@@ -38,4 +38,4 @@ class StrokesRepository:
         self.session.add(strokes)
         await self.session.commit()
         await self.session.refresh(strokes)
-        return strokes.generate_stroke_public()
+        return strokes

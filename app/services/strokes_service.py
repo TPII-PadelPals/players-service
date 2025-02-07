@@ -12,7 +12,8 @@ class StrokesService:
             user_public_id: uuid.UUID
     ) -> StrokePublic:
         repo = StrokesRepository(session)
-        return await repo.get_strokes(user_public_id)
+        stroke = await repo.get_strokes(user_public_id)
+        return stroke.generate_stroke_public()
 
 
     async def create_padel_stroke(
@@ -32,6 +33,7 @@ class StrokesService:
             session: SessionDep,
             user_public_id: uuid.UUID,
             stroke_in: StrokeUpdate,
-    ):
+    ) -> StrokePublic:
         repo = StrokesRepository(session)
-        return await repo.update_strokes(stroke_in, user_public_id)
+        stroke = await repo.update_strokes(stroke_in, user_public_id)
+        return stroke.generate_stroke_public()
