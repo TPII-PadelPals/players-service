@@ -44,9 +44,9 @@ class StrokesRepository:
         strokes: Stroke = result.first()
         if not strokes:
             raise NotFoundException(item="Padel strokes")
-        strokes.update_from_stroke_create(stroke_in)
-        # update_dict = stroke_in.model_dump(exclude_unset=True)
-        # strokes.sqlmodel_update(update_dict)
+        # strokes.update_from_stroke_create(stroke_in)
+        update_dict = stroke_in.model_dump(exclude_unset=True)
+        strokes.sqlmodel_update(update_dict)
         self.session.add(strokes)
         await self.session.commit()
         await self.session.refresh(strokes)

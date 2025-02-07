@@ -113,7 +113,7 @@ class Stroke(StrokeBase, StrokeImmutable, table=True):
 
     def update_from_stroke_create(self, info: StrokeCreate):
         for field in self.__dict__:
-            if field[0] == "_":
+            if field[0] == "_" or field == "id":
                 continue
             value = getattr(info, field, None)
             if value is not None:
