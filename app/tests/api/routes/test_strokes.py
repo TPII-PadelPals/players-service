@@ -51,13 +51,11 @@ async def test_update_strokes(
 
     change_intermediate = ("background_ground", "forehand_back_wall", "backhand_back_wall")
     change_advance = ("forehand_volley", "backhand_volley")
-    data = {
-        "background_ground": 2.0,
-        "forehand_back_wall": 2.0,
-        "backhand_back_wall": 2.0,
-        "forehand_volley": 3.0,
-        "backhand_volley": 3.0,
-    }
+    data = {}
+    for change in change_intermediate:
+        data[change] = 2.0
+    for change in change_advance:
+        data[change] = 3.0
     # test
     response = await async_client.put(
         f"{settings.API_V1_STR}/strokes/", headers=x_api_key_header, params={"user_public_id": user_public_id_str}, json=data
