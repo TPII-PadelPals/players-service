@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import uuid
 from typing import ClassVar
 from sqlmodel import Field, SQLModel, UniqueConstraint
@@ -13,7 +15,7 @@ class StrokeBase(SQLModel):
     LIMIT_MIN_OF_SKILL: ClassVar[float] = BASE_BEGINNER
     LIMIT_MAX_OF_SKILL: ClassVar[float] = BASE_ADVANCE + 1.0
     BASE_SKILL_NEW: ClassVar[float] = BASE_BEGINNER
-    CATEGORIZATION: ClassVar[float] = [BASE_INTERMEDIATE, BASE_ADVANCE]
+    CATEGORIZATION: ClassVar[list[float]] = [BASE_INTERMEDIATE, BASE_ADVANCE]
 
     serve: float | None = Field(default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL)
     forehand_ground: float | None = Field(default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL)
@@ -40,7 +42,7 @@ class StrokeImmutable(SQLModel):
 
 # Properties to receive on item creation
 class StrokeCreate(StrokeBase):
-    def create_stroke_skill(self, user_public_id: uuid.UUID):
+    def create_stroke_skill(self, user_public_id: uuid.UUID) -> Stroke:
         result = Stroke(
             user_public_id=user_public_id,
             serve=self.BASE_SKILL_NEW,
@@ -79,7 +81,7 @@ class Stroke(StrokeBase, StrokeImmutable, table=True):
     )
 
 
-    def update_from_stroke_create(self, info: StrokeCreate):
+    def update_from_stroke_create(self, info: StrokeCreate) -> None:
         for field in self.__dict__:
             if field[0] == "_" or field == "id":
                 continue
@@ -89,15 +91,15 @@ class Stroke(StrokeBase, StrokeImmutable, table=True):
 
 
     @classmethod
-    def skill_categorization_value(cls, value_from_skill: float):
-        size_categorization = len(cls.CATEGORIZATION)
+    def skill_categorization_value(cls, value_from_skill: float) -> int:
+        size_categorization = int(len(cls.CATEGORIZATION))
         for i in range(size_categorization):
             if value_from_skill < cls.CATEGORIZATION[i]:
                 return i
         return size_categorization
 
 
-    def generate_stroke_public(self):
+    def generate_stroke_public(self) -> StrokePublic:
         public = StrokePublic(user_public_id=self.user_public_id)
         for field in self.__dict__:
             if field == "user_public_id" or field == "id" or field[0] == "_":
