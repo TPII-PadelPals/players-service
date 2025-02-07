@@ -1,6 +1,5 @@
 from uuid import UUID
 
-from sqlalchemy.exc import IntegrityError
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -12,21 +11,10 @@ class PlayersRepository:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    # async def _commit_with_exception_handling(self):
-    #     try:
-    #         await self.session.commit()
-    #     except IntegrityError as e:
-    #         await self.session.rollback()
-    #         if "uq_player_constraint" in str(e.orig):
-    #             raise NotUniqueException("player")
-    #         else:
-    #             raise e
 
     async def create_player(self, player_in: PlayerCreate) -> Player:
         player = Player.model_validate(player_in)
         self.session.add(player)
-        # await self._commit_with_exception_handling()
-        # await self.session.refresh(player)
         return player
 
     async def update_player(

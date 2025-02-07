@@ -62,14 +62,6 @@ async def test_get_strokes_raises_exception_if_associated_player_not_exists(sess
     user_public_id = uuid.uuid4()
     repo = StrokesRepository(session)
     # test
-    # try:
-    #     _result = await repo.get_strokes(user_public_id)
-    #     raise AssertionError
-    # # assert
-    # except NotFoundException as error:
-    #     assert error.detail == "Padel strokes not found."
-    # except Exception:
-    #     raise AssertionError
     with pytest.raises(NotFoundException ) as e:
         await repo.get_strokes(user_public_id)
     assert e.value.detail == "Padel strokes not found."

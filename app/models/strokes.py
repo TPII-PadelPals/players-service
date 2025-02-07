@@ -1,14 +1,6 @@
 import uuid
 from typing import ClassVar
-from sqlmodel import Field, SQLModel, Index, SQLModel, UniqueConstraint
-
-
-# BASE_BEGINNER = 1.0
-# BASE_INTERMEDIATE = 2.0
-# BASE_ADVANCE = 3.0
-# CATEGORIZATION = [BASE_INTERMEDIATE, BASE_ADVANCE]
-# DEFINITION_OF_CATEGORIZATION = ["Beginner", "Intermediate", "Advanced"]
-# BASE_SKILL_NEW = BASE_BEGINNER
+from sqlmodel import Field, SQLModel, UniqueConstraint
 
 
 # Shared properties
@@ -83,33 +75,9 @@ class Stroke(StrokeBase, StrokeImmutable, table=True):
     id: int | None = Field(default=None, primary_key=True)
 
     __table_args__ = (
-        # Index("id", "user_public_id"),
         UniqueConstraint("user_public_id", name="uq_stroke_constraint"),
     )
 
-
-    # @classmethod
-    # def auto_test_for_skill(cls, autovalue_skill: str):
-    #     # cuando el usuario se auto-evalua escribe con palabras, retorna el valor a ser almaceenado
-    #     match autovalue_skill.lower():
-    #         case "beginner":
-    #             return cls.BASE_BEGINNER
-    #         case "intermediate":
-    #             return cls.BASE_INTERMEDIATE
-    #         case "advanced":
-    #             return cls.BASE_ADVANCE
-    #         case _:
-    #             # ver si no conviene hacer un raise exception
-    #             return None
-    #
-    #
-    # def update_from_stroke_create(self, info: StrokeCreate):
-    #     for field in self.__dict__:
-    #         if field[0] == "_":
-    #             continue
-    #         value = getattr(info, field, None)
-    #         if value is not None:
-    #             setattr(self, field, self.auto_test_for_skill(value))
 
     def update_from_stroke_create(self, info: StrokeCreate):
         for field in self.__dict__:
@@ -120,11 +88,6 @@ class Stroke(StrokeBase, StrokeImmutable, table=True):
                 setattr(self, field, value)
 
 
-    # @classmethod
-    # def skill_categorization(cls, value_from_skill: float):
-    #     return cls.DEFINITION_OF_CATEGORIZATION[cls.skill_categorization_value(value_from_skill)]
-
-
     @classmethod
     def skill_categorization_value(cls, value_from_skill: float):
         size_categorization = len(cls.CATEGORIZATION)
@@ -132,6 +95,7 @@ class Stroke(StrokeBase, StrokeImmutable, table=True):
             if value_from_skill < cls.CATEGORIZATION[i]:
                 return i
         return size_categorization
+
 
     def generate_stroke_public(self):
         public = StrokePublic(user_public_id=self.user_public_id)

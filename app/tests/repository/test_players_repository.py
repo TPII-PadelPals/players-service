@@ -50,8 +50,6 @@ async def test_create_player_with_user_public_id_already_exists_raises_exception
         await session.commit()
     await session.rollback()
 
-    # assert e.value.detail == "Player already exists."
-
 
 async def test_update_player(session: AsyncSession) -> None:
     user_public_id = str(uuid.uuid4())
