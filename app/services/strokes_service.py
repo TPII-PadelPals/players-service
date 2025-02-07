@@ -1,6 +1,6 @@
 import uuid
 
-from app.models.strokes import StrokeCreate, StrokeUpdate, StrokePublic
+from app.models.strokes import StrokeCreate, StrokeUpdate, StrokePublic, Stroke
 from app.repository.strokes_repository import StrokesRepository
 from app.utilities.dependencies import SessionDep
 
@@ -21,7 +21,7 @@ class StrokesService:
             session: SessionDep,
             stroke_in: StrokeCreate | None,
             user_public_id: uuid.UUID
-    ):
+    ) -> Stroke:
         repo = StrokesRepository(session)
         if stroke_in is None:
             stroke_in = StrokeCreate()

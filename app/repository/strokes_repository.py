@@ -2,7 +2,7 @@ import uuid
 
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
-from app.models.strokes import Stroke, StrokeCreate
+from app.models.strokes import Stroke, StrokeCreate, StrokeUpdate
 from app.utilities.exceptions import NotFoundException, NotUniqueException
 
 
@@ -27,7 +27,7 @@ class StrokesRepository:
         return stroke
 
 
-    async def update_strokes(self, stroke_in: StrokeCreate, user_public_id: uuid.UUID) -> Stroke:
+    async def update_strokes(self, stroke_in: StrokeUpdate, user_public_id: uuid.UUID) -> Stroke:
         query = select(Stroke).where(Stroke.user_public_id == user_public_id)
         result = await self.session.exec(query)
         strokes: Stroke | None = result.first()

@@ -3,7 +3,7 @@ import uuid
 import pytest
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.models.strokes import StrokeCreate
+from app.models.strokes import StrokeCreate, StrokeUpdate
 from app.repository.strokes_repository import StrokesRepository
 from app.services.strokes_service import StrokesService
 from app.utilities.exceptions import NotFoundException
@@ -76,7 +76,7 @@ async def test_update_padel_strokes(session: AsyncSession) -> None:
     stroke = await service.create_padel_stroke(session, info_create, user_public_id)
     await session.commit()
     await session.refresh(stroke)
-    update_info = StrokeCreate(background_ground=3.0, forehand_ground=2.0)
+    update_info = StrokeUpdate(background_ground=3.0, forehand_ground=2.0)
     # test
     result = await repo.update_strokes(update_info, user_public_id)
     # assert
