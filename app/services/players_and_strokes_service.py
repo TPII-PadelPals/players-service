@@ -1,5 +1,6 @@
 from sqlalchemy.exc import IntegrityError
 from app.models.player import Player, PlayerCreate
+from app.models.strokes import Stroke
 from app.services.players_service import PlayersService
 from app.services.strokes_service import StrokesService
 from app.utilities.dependencies import SessionDep
@@ -32,7 +33,7 @@ class PlayersAndStrokesService:
             raise e
 
 
-    async def _create_strokes(self, session: SessionDep, player_in: PlayerCreate):
+    async def _create_strokes(self, session: SessionDep, player_in: PlayerCreate) -> Stroke:
         service_strokes = StrokesService()
         try:
             stroke = await service_strokes.create_padel_stroke(session, None, player_in.user_public_id)
@@ -46,7 +47,7 @@ class PlayersAndStrokesService:
             raise e
 
 
-    async def _finish_transaction(self, session: SessionDep, other_for_refresh: list):
+    async def _finish_transaction(self, session: SessionDep, other_for_refresh: list[any]) -> None:
         try:
             await session.commit()
             for item in other_for_refresh:
@@ -59,6 +60,6 @@ class PlayersAndStrokesService:
 
 
     @staticmethod
-    async def _raise_not_unique(session: SessionDep):
+    async def _raise_not_unique(session: SessionDep) -> None:
         await session.rollback()
         raise NotUniqueException("player")

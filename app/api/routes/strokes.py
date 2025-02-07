@@ -37,7 +37,7 @@ async def update_stroke(
     status_code=status.HTTP_200_OK,
     responses={**STROKES_GET_RESPONSES},  # type: ignore[dict-item]
 )
-async def get_strokes(*, session: SessionDep, user_public_id: uuid.UUID):
+async def get_strokes(*, session: SessionDep, user_public_id: uuid.UUID) -> Any:
     """
     Get a strokes.
     """

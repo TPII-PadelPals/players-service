@@ -2,7 +2,7 @@ import uuid
 
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
-from app.models.strokes import Stroke, StrokePublic, StrokeCreate
+from app.models.strokes import Stroke, StrokeCreate
 from app.utilities.exceptions import NotFoundException, NotUniqueException
 
 
@@ -14,8 +14,8 @@ class StrokesRepository:
     async def get_strokes(self, user_public_id: uuid.UUID) -> Stroke:
         query = select(Stroke).where(Stroke.user_public_id == user_public_id)
         result = await self.session.exec(query)
-        strokes: Stroke = result.first()
-        if not strokes:
+        strokes: Stroke | None = result.first()
+        if strokes is None:
             raise NotFoundException(item="Padel strokes")
         return strokes
 
@@ -30,8 +30,8 @@ class StrokesRepository:
     async def update_strokes(self, stroke_in: StrokeCreate, user_public_id: uuid.UUID) -> Stroke:
         query = select(Stroke).where(Stroke.user_public_id == user_public_id)
         result = await self.session.exec(query)
-        strokes: Stroke = result.first()
-        if not strokes:
+        strokes: Stroke | None = result.first()
+        if strokes is None:
             raise NotFoundException(item="Padel strokes")
         update_dict = stroke_in.model_dump(exclude_unset=True)
         strokes.sqlmodel_update(update_dict)
