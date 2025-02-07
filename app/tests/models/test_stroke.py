@@ -10,7 +10,7 @@ def test_create_strokes():
     # assert
     for field in result.__dict__:
         value = getattr(result, field, None)
-        if field[0] == "_":
+        if field[0] == "_" or field == "id":
             continue
         if field == "serve":
             assert value == 3.0

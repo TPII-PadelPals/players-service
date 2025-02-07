@@ -136,10 +136,10 @@ class Stroke(StrokeBase, StrokeImmutable, table=True):
     def generate_stroke_public(self):
         public = StrokePublic(user_public_id=self.user_public_id)
         for field in self.__dict__:
-            if field == "user_public_id" or field[0] == "_":
+            if field == "user_public_id" or field == "id" or field[0] == "_":
                 continue
             value = getattr(self, field)
-            setattr(public, field, self.skill_categorization(value))
+            setattr(public, field, value)
         return public
 
 
