@@ -27,11 +27,6 @@ class PlayerAvailabilityImmutable(SQLModel):
     user_public_id: UUID = Field()
 
 
-# Properties to receive on player creation
-class PlayerAvailabilityCreate(SQLModel):
-    available_days: list[int] = Field()
-
-
 # Database model, database table inferred from class name
 class PlayerAvailability(
     PlayerAvailabilityBase, PlayerAvailabilityImmutable, table=True
@@ -46,10 +41,7 @@ class PlayerAvailability(
         ),
     )
 
-    def set_available(self):
-        self.is_available = True
-
 
 # Properties to return via API, id is always required
-class PlayerAvailabilityPublic(PlayerAvailabilityImmutable, PlayerAvailabilityCreate):
-    pass
+class PlayerAvailabilityPublic(SQLModel):
+    available_days: list[PlayerAvailability]

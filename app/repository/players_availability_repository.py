@@ -4,7 +4,6 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.player_availability import (
     PlayerAvailability,
-    PlayerAvailabilityCreate,
     PlayerAvailabilityPublic,
 )
 from app.utilities.repository.players_utils import PlayersUtils
@@ -15,24 +14,19 @@ class PlayersAvailabilityRepository:
         self.session = session
 
     async def create_player_availability(
-        self, user_public_id: UUID, player_availability_in: PlayerAvailabilityCreate
+        self, user_public_id: UUID
     ) -> PlayerAvailabilityPublic:
-        player_availability_create = PlayerAvailabilityCreate.model_validate(
-            player_availability_in
-        )
-        available_days = player_availability_create.available_days
         begin_day = PlayerAvailability.get_begin_day()
         last_day = PlayerAvailability.get_last_day()
+        player_availabilities = []
         for availability_day in range(begin_day, last_day + 1):
             player_availability = PlayerAvailability(
                 user_public_id=user_public_id, week_day=availability_day
             )
-            availability_day in player_availability_create.available_days and player_availability.set_available()
+            player_availabilities.append(player_availability.model_dump())
             self.session.add(player_availability)
         await PlayersUtils(self.session).commit_with_exception_handling(
             constraint_name="uq_player_availability_constraint",
             class_name="player availability",
         )
-        return PlayerAvailabilityPublic(
-            user_public_id=user_public_id, available_days=available_days
-        )
+        return PlayerAvailabilityPublic(available_days=player_availabilities)

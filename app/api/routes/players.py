@@ -5,7 +5,6 @@ from fastapi import APIRouter, status
 
 from app.models.player import PlayerCreate, PlayerPublic, PlayerUpdate
 from app.models.player_availability import (
-    PlayerAvailabilityCreate,
     PlayerAvailabilityPublic,
 )
 from app.services.players_availability_service import PlayersAvailabilityService
@@ -77,12 +76,11 @@ async def create_player_availability(
     *,
     session: SessionDep,
     user_public_id: uuid.UUID,
-    player_availability_in: PlayerAvailabilityCreate,
 ) -> Any:
     """
     Create new player availability.
     """
     player_availability_service = PlayersAvailabilityService()
     return await player_availability_service.create_player_availability(
-        session, user_public_id, player_availability_in
+        session, user_public_id
     )
