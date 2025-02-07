@@ -29,7 +29,7 @@ class PlayersAndStrokesService:
             print("ASDASDASD OK refresh")
             return player
         except IntegrityError:
-            self._raise_not_unique(session)
+            await self._raise_not_unique(session)
         except Exception as e:
             print("ASDASDASD ERROR: ", str(e))
             await session.rollback()
@@ -43,15 +43,15 @@ class PlayersAndStrokesService:
             print("ASDASDASD OK stroke")
             return stroke
         except NotUniqueException:
-            self._raise_not_unique(session)
+            await self._raise_not_unique(session)
         except IntegrityError:
-            self._raise_not_unique(session)
+            await self._raise_not_unique(session)
         except Exception as e:
             print("ASDASDASD ERROR IN CREATING STROKES")
             raise e
 
     @staticmethod
-    def _raise_not_unique(session: SessionDep):
+    async def _raise_not_unique(session: SessionDep):
         print("ASDASDASD NOT UNIQUE")
-        session.rollback()
+        await session.rollback()
         raise NotUniqueException("player")
