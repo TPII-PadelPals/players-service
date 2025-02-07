@@ -20,10 +20,10 @@ service = StrokesService()
     responses={**STROKES_PUT_RESPONSES},  # type: ignore[dict-item]
 )
 async def update_stroke(
-        *,
-        session: SessionDep,
-        user_public_id: uuid.UUID,
-        stroke_in: StrokeUpdate,
+    *,
+    session: SessionDep,
+    user_public_id: uuid.UUID,
+    stroke_in: StrokeUpdate,
 ) -> Any:
     """
     Update a strokes.

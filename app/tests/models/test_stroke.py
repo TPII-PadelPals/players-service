@@ -1,5 +1,6 @@
 import uuid
-from app.models.strokes import StrokeCreate, Stroke
+
+from app.models.strokes import Stroke, StrokeCreate
 
 
 def test_create_strokes() -> None:

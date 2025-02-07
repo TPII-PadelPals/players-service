@@ -14,7 +14,6 @@ class PlayersService:
         player = await repo.create_player(player_in)
         return player
 
-
     async def update_player(
         self, session: SessionDep, user_public_id: UUID, player_in: PlayerUpdate
     ) -> Player:
@@ -25,7 +24,6 @@ class PlayersService:
             player_in.latitude = latitude
         repo = PlayersRepository(session)
         return await repo.update_player(user_public_id, player_in)
-
 
     async def read_player(self, session: SessionDep, user_public_id: UUID) -> Player:
         repo = PlayersRepository(session)

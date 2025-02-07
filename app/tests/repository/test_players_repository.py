@@ -1,11 +1,12 @@
 import uuid
 
 import pytest
-from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.exc import IntegrityError
+from sqlmodel.ext.asyncio.session import AsyncSession
+
 from app.models.player import PlayerCreate, PlayerUpdate
 from app.repository.players_repository import PlayersRepository
-from app.utilities.exceptions import NotFoundException, NotUniqueException
+from app.utilities.exceptions import NotFoundException
 
 
 async def test_create_player(session: AsyncSession) -> None:

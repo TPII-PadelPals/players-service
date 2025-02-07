@@ -6,7 +6,7 @@ from app.core.config import settings
 
 
 async def test_create_player_create_strokes_associated(
-        async_client: AsyncClient, x_api_key_header: dict[str, str]
+    async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
     user_public_id = uuid.uuid4()
     user_public_id_str = str(user_public_id)
@@ -22,7 +22,9 @@ async def test_create_player_create_strokes_associated(
 
     # test
     response_stroke = await async_client.get(
-        f"{settings.API_V1_STR}/strokes/", headers=x_api_key_header, params={"user_public_id": user_public_id_str},
+        f"{settings.API_V1_STR}/strokes/",
+        headers=x_api_key_header,
+        params={"user_public_id": user_public_id_str},
     )
     # assert
     assert response_stroke.status_code == 200
@@ -33,8 +35,9 @@ async def test_create_player_create_strokes_associated(
         else:
             assert value == 1.0
 
+
 async def test_update_strokes(
-        async_client: AsyncClient, x_api_key_header: dict[str, str]
+    async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
     user_public_id = uuid.uuid4()
     user_public_id_str = str(user_public_id)
@@ -48,7 +51,11 @@ async def test_update_strokes(
     # If the test fails it has no meaning
     assert response_player.status_code == 201
 
-    change_intermediate = ("background_ground", "forehand_back_wall", "backhand_back_wall")
+    change_intermediate = (
+        "background_ground",
+        "forehand_back_wall",
+        "backhand_back_wall",
+    )
     change_advance = ("forehand_volley", "backhand_volley")
     data = {}
     for change in change_intermediate:
@@ -57,7 +64,10 @@ async def test_update_strokes(
         data[change] = 3.0
     # test
     response = await async_client.put(
-        f"{settings.API_V1_STR}/strokes/", headers=x_api_key_header, params={"user_public_id": user_public_id_str}, json=data
+        f"{settings.API_V1_STR}/strokes/",
+        headers=x_api_key_header,
+        params={"user_public_id": user_public_id_str},
+        json=data,
     )
     # assert
     assert response.status_code == 200

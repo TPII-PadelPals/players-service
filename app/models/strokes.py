@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import uuid
 from typing import ClassVar
+
 from sqlmodel import Field, SQLModel, UniqueConstraint
 
 
@@ -17,22 +18,54 @@ class StrokeBase(SQLModel):
     BASE_SKILL_NEW: ClassVar[float] = BASE_BEGINNER
     CATEGORIZATION: ClassVar[list[float]] = [BASE_INTERMEDIATE, BASE_ADVANCE]
 
-    serve: float | None = Field(default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL)
-    forehand_ground: float | None = Field(default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL)
-    background_ground: float | None = Field(default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL)
-    forehand_back_wall: float | None = Field(default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL)
-    backhand_back_wall: float | None = Field(default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL)
-    forehand_side_wall: float | None = Field(default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL)
-    backhand_side_wall: float | None = Field(default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL)
-    forehand_double_walls: float | None = Field(default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL)
-    backhand_double_walls: float | None = Field(default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL)
-    forehand_counter_wall: float | None = Field(default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL)
-    backhand_counter_wall: float | None = Field(default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL)
-    forehand_volley: float | None = Field(default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL)
-    backhand_volley: float | None = Field(default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL)
-    lob: float | None = Field(default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL)
-    smash: float | None = Field(default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL)
-    bandeja: float | None = Field(default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL)
+    serve: float | None = Field(
+        default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL
+    )
+    forehand_ground: float | None = Field(
+        default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL
+    )
+    background_ground: float | None = Field(
+        default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL
+    )
+    forehand_back_wall: float | None = Field(
+        default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL
+    )
+    backhand_back_wall: float | None = Field(
+        default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL
+    )
+    forehand_side_wall: float | None = Field(
+        default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL
+    )
+    backhand_side_wall: float | None = Field(
+        default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL
+    )
+    forehand_double_walls: float | None = Field(
+        default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL
+    )
+    backhand_double_walls: float | None = Field(
+        default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL
+    )
+    forehand_counter_wall: float | None = Field(
+        default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL
+    )
+    backhand_counter_wall: float | None = Field(
+        default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL
+    )
+    forehand_volley: float | None = Field(
+        default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL
+    )
+    backhand_volley: float | None = Field(
+        default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL
+    )
+    lob: float | None = Field(
+        default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL
+    )
+    smash: float | None = Field(
+        default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL
+    )
+    bandeja: float | None = Field(
+        default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL
+    )
 
 
 # Shared private properties
@@ -60,7 +93,7 @@ class StrokeCreate(StrokeBase):
             backhand_volley=self.BASE_SKILL_NEW,
             lob=self.BASE_SKILL_NEW,
             smash=self.BASE_SKILL_NEW,
-            bandeja=self.BASE_SKILL_NEW
+            bandeja=self.BASE_SKILL_NEW,
         )
         result.update_from_stroke_create(self)
         return result
@@ -76,10 +109,7 @@ class Stroke(StrokeBase, StrokeImmutable, table=True):
     __tablename__ = "strokes"
     id: int | None = Field(default=None, primary_key=True)
 
-    __table_args__ = (
-        UniqueConstraint("user_public_id", name="uq_stroke_constraint"),
-    )
-
+    __table_args__ = (UniqueConstraint("user_public_id", name="uq_stroke_constraint"),)
 
     def update_from_stroke_create(self, info: StrokeCreate) -> None:
         for field in self.__dict__:
@@ -89,7 +119,6 @@ class Stroke(StrokeBase, StrokeImmutable, table=True):
             if value is not None:
                 setattr(self, field, value)
 
-
     @classmethod
     def skill_categorization_value(cls, value_from_skill: float) -> int:
         size_categorization = int(len(cls.CATEGORIZATION))
@@ -97,7 +126,6 @@ class Stroke(StrokeBase, StrokeImmutable, table=True):
             if value_from_skill < cls.CATEGORIZATION[i]:
                 return i
         return size_categorization
-
 
     def generate_stroke_public(self) -> StrokePublic:
         public = StrokePublic(user_public_id=self.user_public_id)

@@ -7,7 +7,9 @@ from app.services.players_and_strokes_service import PlayersAndStrokesService
 from app.services.strokes_service import StrokesService
 
 
-async def test_create_strokes_defaults_to_beginner_base_level(session: AsyncSession) -> None:
+async def test_create_strokes_defaults_to_beginner_base_level(
+    session: AsyncSession,
+) -> None:
     user_public_id = uuid.uuid4()
     service = StrokesService()
     # test
@@ -30,7 +32,9 @@ async def test_create_and_get_strokes(session: AsyncSession) -> None:
     user_public_id = uuid.uuid4()
     service = StrokesService()
     info_strokes = None
-    stroke_created = await service.create_padel_stroke(session, info_strokes, user_public_id)
+    stroke_created = await service.create_padel_stroke(
+        session, info_strokes, user_public_id
+    )
     await session.commit()
     await session.refresh(stroke_created)
     # test
@@ -52,7 +56,9 @@ async def test_generate_strokes_whit_player(session: AsyncSession) -> None:
 
     strokes_service = StrokesService()
     players_and_strokes_service = PlayersAndStrokesService()
-    player_create = PlayerCreate(user_public_id=str(user_public_id), telegram_id=telegram_id)
+    player_create = PlayerCreate(
+        user_public_id=str(user_public_id), telegram_id=telegram_id
+    )
     # test
     _player = await players_and_strokes_service.create_player(session, player_create)
     strokes = await strokes_service.get_strokes(session, user_public_id)

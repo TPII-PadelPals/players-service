@@ -1,11 +1,13 @@
+from typing import Any
+
 from sqlalchemy.exc import IntegrityError
+
 from app.models.player import Player, PlayerCreate
 from app.models.strokes import Stroke
 from app.services.players_service import PlayersService
 from app.services.strokes_service import StrokesService
 from app.utilities.dependencies import SessionDep
 from app.utilities.exceptions import NotUniqueException
-from typing import Any
 
 
 class PlayersAndStrokesService:
@@ -20,8 +22,9 @@ class PlayersAndStrokesService:
         await self._finish_transaction(session, other_for_refresh)
         return player
 
-
-    async def _create_only_player(self, session: SessionDep, player_in: PlayerCreate) -> Player:
+    async def _create_only_player(
+        self, session: SessionDep, player_in: PlayerCreate
+    ) -> Player:
         service_player = PlayersService()
         try:
             player = await service_player.create_player(session, player_in)
@@ -33,11 +36,14 @@ class PlayersAndStrokesService:
             await session.rollback()
             raise e
 
-
-    async def _create_strokes(self, session: SessionDep, player_in: PlayerCreate) -> Stroke:
+    async def _create_strokes(
+        self, session: SessionDep, player_in: PlayerCreate
+    ) -> Stroke:
         service_strokes = StrokesService()
         try:
-            stroke = await service_strokes.create_padel_stroke(session, None, player_in.user_public_id)
+            stroke = await service_strokes.create_padel_stroke(
+                session, None, player_in.user_public_id
+            )
             # The commit is not made because it is not the final function
             return stroke
         except NotUniqueException:
@@ -47,8 +53,9 @@ class PlayersAndStrokesService:
         except Exception as e:
             raise e
 
-
-    async def _finish_transaction(self, session: SessionDep, other_for_refresh: list[Any]) -> None:
+    async def _finish_transaction(
+        self, session: SessionDep, other_for_refresh: list[Any]
+    ) -> None:
         try:
             await session.commit()
             for item in other_for_refresh:
@@ -58,7 +65,6 @@ class PlayersAndStrokesService:
         except Exception as e:
             await session.rollback()
             raise e
-
 
     @staticmethod
     async def _raise_not_unique(session: SessionDep) -> NotUniqueException:

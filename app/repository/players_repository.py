@@ -4,13 +4,12 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.player import Player, PlayerCreate, PlayerUpdate
-from app.utilities.exceptions import NotFoundException, NotUniqueException
+from app.utilities.exceptions import NotFoundException
 
 
 class PlayersRepository:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
-
 
     async def create_player(self, player_in: PlayerCreate) -> Player:
         player = Player.model_validate(player_in)

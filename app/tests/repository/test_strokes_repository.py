@@ -58,14 +58,15 @@ async def test_get_strokes(session: AsyncSession) -> None:
             assert value == 1.0
 
 
-async def test_get_strokes_raises_exception_if_associated_player_not_exists(session: AsyncSession) -> None:
+async def test_get_strokes_raises_exception_if_associated_player_not_exists(
+    session: AsyncSession,
+) -> None:
     user_public_id = uuid.uuid4()
     repo = StrokesRepository(session)
     # test
-    with pytest.raises(NotFoundException ) as e:
+    with pytest.raises(NotFoundException) as e:
         await repo.get_strokes(user_public_id)
     assert e.value.detail == "Padel strokes not found."
-
 
 
 async def test_update_padel_strokes(session: AsyncSession) -> None:
