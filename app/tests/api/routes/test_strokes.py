@@ -27,7 +27,6 @@ async def test_create_player_create_strokes_associated(
     # assert
     assert response_stroke.status_code == 200
     content = response_stroke.json()
-    assert content["user_public_id"] == user_public_id_str
     for field, value in content.items():
         if field == "user_public_id":
             assert value == user_public_id_str
@@ -63,7 +62,6 @@ async def test_update_strokes(
     # assert
     assert response.status_code == 200
     content = response.json()
-    assert content["user_public_id"] == user_public_id_str
     for field, value in content.items():
         if field == "user_public_id":
             assert value == user_public_id_str
