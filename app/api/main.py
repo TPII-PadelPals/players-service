@@ -8,4 +8,4 @@ api_router.include_router(
     items_service.router, prefix="/items-service", tags=["items-service"]
 )
 api_router.include_router(players.router, prefix="/players", tags=["players"])
-api_router.include_router(strokes.router, prefix="/strokes", tags=["strokes"])
+api_router.include_router(strokes.router, prefix="/players/{user_public_id}/strokes", tags=["strokes"])

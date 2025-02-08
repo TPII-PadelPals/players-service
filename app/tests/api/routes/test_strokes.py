@@ -22,7 +22,7 @@ async def test_create_player_create_strokes_associated(
 
     # test
     response_stroke = await async_client.get(
-        f"{settings.API_V1_STR}/strokes/",
+        f"{settings.API_V1_STR}/players/{user_public_id_str}/strokes/",
         headers=x_api_key_header,
         params={"user_public_id": user_public_id_str},
     )
@@ -64,7 +64,7 @@ async def test_update_strokes(
         data[change] = 3.0
     # test
     response = await async_client.put(
-        f"{settings.API_V1_STR}/strokes/",
+        f"{settings.API_V1_STR}/players/{user_public_id_str}/strokes/",
         headers=x_api_key_header,
         params={"user_public_id": user_public_id_str},
         json=data,
