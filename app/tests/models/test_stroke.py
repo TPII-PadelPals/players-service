@@ -21,20 +21,6 @@ def test_create_strokes() -> None:
             assert value == 1.0
 
 
-def test_skill_categorization_value() -> None:
-    test_intermediate = 2
-    test_advancance = 3
-    for i in range(-10, test_intermediate):
-        skill_value_less_2: float = i / 10.0
-        assert Stroke.skill_categorization_value(skill_value_less_2) == 0
-    for i in range(10 * test_intermediate, 10 * test_advancance):
-        skill_value_upper_2_and_less_3: float = i / 10.0
-        assert Stroke.skill_categorization_value(skill_value_upper_2_and_less_3) == 1
-    for i in range(10 * test_advancance, 10 * (test_advancance + 1)):
-        skill_value_upper_3: float = i / 10.0
-        assert Stroke.skill_categorization_value(skill_value_upper_3) == 2
-
-
 def test_generate_padel_strok_public() -> None:
     user_id = uuid.uuid4()
     create = StrokeCreate(serve=3.0, backhand_double_walls=2.0)

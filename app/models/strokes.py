@@ -113,14 +113,6 @@ class Stroke(StrokeBase, StrokeImmutable, table=True):
     __table_args__ = (UniqueConstraint("user_public_id", name="uq_stroke_constraint"),)
 
 
-    @classmethod
-    def skill_categorization_value(cls, value_from_skill: float) -> int:
-        size_categorization = int(len(cls.CATEGORIZATION))
-        for i in range(size_categorization):
-            if value_from_skill < cls.CATEGORIZATION[i]:
-                return i
-        return size_categorization
-
     def to_public(self) -> StrokePublic:
         data = self.model_dump()
         public = StrokePublic(**data)
