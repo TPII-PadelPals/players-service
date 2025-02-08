@@ -121,13 +121,9 @@ class Stroke(StrokeBase, StrokeImmutable, table=True):
                 return i
         return size_categorization
 
-    def generate_stroke_public(self) -> StrokePublic:
-        public = StrokePublic(user_public_id=self.user_public_id)
-        for field in self.__dict__:
-            if field == "user_public_id" or field == "id" or field[0] == "_":
-                continue
-            value = getattr(self, field)
-            setattr(public, field, value)
+    def to_public(self) -> StrokePublic:
+        data = self.model_dump()
+        public = StrokePublic(**data)
         return public
 
 

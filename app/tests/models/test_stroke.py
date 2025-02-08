@@ -40,7 +40,7 @@ def test_generate_padel_strok_public() -> None:
     create = StrokeCreate(serve=3.0, backhand_double_walls=2.0)
     stroke = create.from_public(user_id)
     # test
-    result = stroke.generate_stroke_public()
+    result = stroke.to_public()
     # assert
     for field in result.__dict__:
         value = getattr(result, field, None)

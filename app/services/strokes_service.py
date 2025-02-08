@@ -11,7 +11,7 @@ class StrokesService:
     ) -> StrokePublic:
         repo = StrokesRepository(session)
         stroke = await repo.get_strokes(user_public_id)
-        return stroke.generate_stroke_public()
+        return stroke.to_public()
 
     async def create_strokes(
         self,
@@ -32,4 +32,4 @@ class StrokesService:
     ) -> StrokePublic:
         repo = StrokesRepository(session)
         stroke = await repo.update_strokes(stroke_in, user_public_id)
-        return stroke.generate_stroke_public()
+        return stroke.to_public()
