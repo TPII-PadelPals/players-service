@@ -75,7 +75,7 @@ class StrokeImmutable(SQLModel):
 
 # Properties to receive on item creation
 class StrokeCreate(StrokeBase):
-    def create_stroke_skill(self, user_public_id: uuid.UUID) -> Stroke:
+    def from_public(self, user_public_id: uuid.UUID) -> Stroke:
         result = Stroke(
             user_public_id=user_public_id,
             serve=self.BASE_SKILL_NEW,
@@ -95,7 +95,8 @@ class StrokeCreate(StrokeBase):
             smash=self.BASE_SKILL_NEW,
             bandeja=self.BASE_SKILL_NEW,
         )
-        result.update_from_stroke_create(self)
+        update_dict = self.model_dump(exclude_unset=True)
+        result.sqlmodel_update(update_dict)
         return result
 
 
@@ -111,13 +112,6 @@ class Stroke(StrokeBase, StrokeImmutable, table=True):
 
     __table_args__ = (UniqueConstraint("user_public_id", name="uq_stroke_constraint"),)
 
-    def update_from_stroke_create(self, info: StrokeCreate) -> None:
-        for field in self.__dict__:
-            if field[0] == "_" or field == "id":
-                continue
-            value = getattr(info, field, None)
-            if value is not None:
-                setattr(self, field, value)
 
     @classmethod
     def skill_categorization_value(cls, value_from_skill: float) -> int:

@@ -22,7 +22,7 @@ class StrokesRepository:
     async def create_stroke(
         self, stroke_in: StrokeCreate, user_public_id: uuid.UUID
     ) -> Stroke:
-        stroke_to_valid = stroke_in.create_stroke_skill(user_public_id)
+        stroke_to_valid = stroke_in.from_public(user_public_id)
         stroke = Stroke.model_validate(stroke_to_valid)
         self.session.add(stroke)
         return stroke

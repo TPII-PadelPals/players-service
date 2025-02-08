@@ -7,7 +7,7 @@ def test_create_strokes() -> None:
     user_id = uuid.uuid4()
     create = StrokeCreate(serve=3.0)
     # test
-    result = create.create_stroke_skill(user_id)
+    result = create.from_public(user_id)
     # assert
     for field in result.__dict__:
         value = getattr(result, field, None)
@@ -38,7 +38,7 @@ def test_skill_categorization_value() -> None:
 def test_generate_padel_strok_public() -> None:
     user_id = uuid.uuid4()
     create = StrokeCreate(serve=3.0, backhand_double_walls=2.0)
-    stroke = create.create_stroke_skill(user_id)
+    stroke = create.from_public(user_id)
     # test
     result = stroke.generate_stroke_public()
     # assert
