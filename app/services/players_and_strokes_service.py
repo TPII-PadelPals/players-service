@@ -14,59 +14,42 @@ class PlayersAndStrokesService:
     async def create_player(
         self, session: SessionDep, player_in: PlayerCreate
     ) -> Player:
-        player = await self._create_only_player(session, player_in)
-        stroke = await self._create_strokes(session, player_in)
-        # All data that needs to be refreshed must be in the list
-        other_for_refresh = [player, stroke]
-        # This is the final function (refresh are done)
-        await self._finish_transaction(session, other_for_refresh)
-        return player
-
-    async def _create_only_player(
-        self, session: SessionDep, player_in: PlayerCreate
-    ) -> Player:
-        service_player = PlayersService()
         try:
-            player = await service_player.create_player(session, player_in)
-            # The commit is not made because it is not the final function
+            player = await self._create_player(session, player_in)
+            strokes = await self._create_strokes(session, player_in)
+            # All data that needs to be refreshed must be in the list
+            items_to_refresh = [player, strokes]
+            # This is the final function (refresh are done)
+            await self._finish_transaction(session, items_to_refresh)
             return player
         except IntegrityError:
-            raise await self._raise_not_unique(session)
+            await session.rollback()
+            raise NotUniqueException("player")
         except Exception as e:
             await session.rollback()
             raise e
+
+    async def _create_player(
+        self, session: SessionDep, player_in: PlayerCreate
+    ) -> Player:
+        service_player = PlayersService()
+        player = await service_player.create_player(session, player_in)
+        # The commit is not made because it is not the final function
+        return player
 
     async def _create_strokes(
         self, session: SessionDep, player_in: PlayerCreate
     ) -> Stroke:
         service_strokes = StrokesService()
-        try:
-            stroke = await service_strokes.create_padel_stroke(
-                session, None, player_in.user_public_id
-            )
-            # The commit is not made because it is not the final function
-            return stroke
-        except NotUniqueException:
-            raise await self._raise_not_unique(session)
-        except IntegrityError:
-            raise await self._raise_not_unique(session)
-        except Exception as e:
-            raise e
+        stroke = await service_strokes.create_strokes(
+            session, None, player_in.user_public_id
+        )
+        # The commit is not made because it is not the final function
+        return stroke
 
     async def _finish_transaction(
         self, session: SessionDep, other_for_refresh: list[Any]
     ) -> None:
-        try:
-            await session.commit()
-            for item in other_for_refresh:
-                await session.refresh(item)
-        except IntegrityError:
-            raise await self._raise_not_unique(session)
-        except Exception as e:
-            await session.rollback()
-            raise e
-
-    @staticmethod
-    async def _raise_not_unique(session: SessionDep) -> NotUniqueException:
-        await session.rollback()
-        return NotUniqueException("player")
+        await session.commit()
+        for item in other_for_refresh:
+            await session.refresh(item)

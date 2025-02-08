@@ -13,7 +13,7 @@ class StrokesService:
         stroke = await repo.get_strokes(user_public_id)
         return stroke.generate_stroke_public()
 
-    async def create_padel_stroke(
+    async def create_strokes(
         self,
         session: SessionDep,
         stroke_in: StrokeCreate | None,

@@ -14,7 +14,7 @@ async def test_create_strokes_defaults_to_beginner_base_level(
     service = StrokesService()
     # test
     info_strokes = None
-    stroke = await service.create_padel_stroke(session, info_strokes, user_public_id)
+    stroke = await service.create_strokes(session, info_strokes, user_public_id)
     await session.commit()
     await session.refresh(stroke)
     # assert
@@ -32,7 +32,7 @@ async def test_create_and_get_strokes(session: AsyncSession) -> None:
     user_public_id = uuid.uuid4()
     service = StrokesService()
     info_strokes = None
-    stroke_created = await service.create_padel_stroke(
+    stroke_created = await service.create_strokes(
         session, info_strokes, user_public_id
     )
     await session.commit()

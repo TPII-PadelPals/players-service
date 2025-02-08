@@ -37,7 +37,7 @@ async def test_get_strokes(session: AsyncSession) -> None:
     service = StrokesService()
     repo = StrokesRepository(session)
     info_create = StrokeCreate(background_ground=2.0, backhand_volley=3.0)
-    stroke = await service.create_padel_stroke(session, info_create, user_public_id)
+    stroke = await service.create_strokes(session, info_create, user_public_id)
     await session.commit()
     await session.refresh(stroke)
     # test
@@ -74,7 +74,7 @@ async def test_update_padel_strokes(session: AsyncSession) -> None:
     service = StrokesService()
     repo = StrokesRepository(session)
     info_create = StrokeCreate(background_ground=2.0, backhand_volley=3.0)
-    stroke = await service.create_padel_stroke(session, info_create, user_public_id)
+    stroke = await service.create_strokes(session, info_create, user_public_id)
     await session.commit()
     await session.refresh(stroke)
     update_info = StrokeUpdate(background_ground=3.0, forehand_ground=2.0)
