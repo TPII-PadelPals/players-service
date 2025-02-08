@@ -28,7 +28,7 @@ async def update_stroke(
     """
     Update a strokes.
     """
-    return await service.update_stroke(session, user_public_id, stroke_in)
+    return await service.update_strokes(session, user_public_id, stroke_in)
 
 
 @router.get(

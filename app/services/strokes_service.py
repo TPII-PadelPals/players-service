@@ -24,7 +24,7 @@ class StrokesService:
             stroke_in = StrokeCreate()
         return await repo.create_stroke(stroke_in, user_public_id)
 
-    async def update_stroke(
+    async def update_strokes(
         self,
         session: SessionDep,
         user_public_id: uuid.UUID,
