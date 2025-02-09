@@ -25,7 +25,7 @@ class PlayersAvailabilityRepository:
             )
             player_availabilities.append(player_availability.model_dump())
             self.session.add(player_availability)
-        await PlayersUtils(self.session).commit_with_exception_handling(
+        await PlayersUtils(self.session).flush_with_exception_handling(
             constraint_name="uq_player_availability_constraint",
             class_name="player availability",
         )

@@ -8,11 +8,11 @@ class PlayersUtils:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def commit_with_exception_handling(
+    async def flush_with_exception_handling(
         self, constraint_name: str, class_name: str
     ):
         try:
-            await self.session.commit()
+            await self.session.flush()
         except IntegrityError as e:
             await self.session.rollback()
             if constraint_name in str(e.orig):

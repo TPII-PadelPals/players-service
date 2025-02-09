@@ -20,6 +20,7 @@ from app.utilities.messages import (
 router = APIRouter()
 
 service = PlayersService()
+player_availability_service = PlayersAvailabilityService()
 
 
 @router.post(
@@ -32,7 +33,13 @@ async def create_player(*, session: SessionDep, player_in: PlayerCreate) -> Any:
     """
     Create new player.
     """
-    return await service.create_player(session, player_in)
+    player = await service.create_player(session, player_in)
+    await player_availability_service.create_player_availability(
+        session, player_in.user_public_id
+    )
+    await session.commit()
+    await session.refresh(player)
+    return player
 
 
 @router.put(
@@ -80,7 +87,6 @@ async def create_player_availability(
     """
     Create new player availability.
     """
-    player_availability_service = PlayersAvailabilityService()
     return await player_availability_service.create_player_availability(
         session, user_public_id
     )

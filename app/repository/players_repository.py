@@ -15,10 +15,9 @@ class PlayersRepository:
     async def create_player(self, player_in: PlayerCreate) -> Player:
         player = Player.model_validate(player_in)
         self.session.add(player)
-        await PlayersUtils(self.session).commit_with_exception_handling(
+        await PlayersUtils(self.session).flush_with_exception_handling(
             constraint_name="uq_player_constraint", class_name="player"
         )
-        await self.session.refresh(player)
         return player
 
     async def update_player(
