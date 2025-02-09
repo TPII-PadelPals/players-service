@@ -14,7 +14,7 @@ async def test_create_strokes(session: AsyncSession) -> None:
     repo = StrokesRepository(session)
     info_create = StrokeCreate(background_ground=2.0, backhand_volley=3.0)
     # test
-    result = await repo.create_stroke(info_create, user_public_id)
+    result = await repo.create_strokes(info_create, user_public_id)
     await session.commit()
     await session.refresh(result)
     # assert

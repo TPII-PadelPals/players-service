@@ -8,15 +8,12 @@ from sqlmodel import Field, SQLModel, UniqueConstraint
 
 # Shared properties
 class StrokeBase(SQLModel):
-    # must always be fulfilled
-    # LIMIT_MIN_OF_SKILL <= BASE_BEGINNER < BASE_INTERMEDIATE < BASE_ADVANCE <= LIMIT_MAX_OF_SKILL
     BASE_BEGINNER: ClassVar[float] = 1.0
     BASE_INTERMEDIATE: ClassVar[float] = 2.0
     BASE_ADVANCE: ClassVar[float] = 3.0
     LIMIT_MIN_OF_SKILL: ClassVar[float] = BASE_BEGINNER
     LIMIT_MAX_OF_SKILL: ClassVar[float] = BASE_ADVANCE + 1.0
     BASE_SKILL_NEW: ClassVar[float] = BASE_BEGINNER
-    CATEGORIZATION: ClassVar[list[float]] = [BASE_INTERMEDIATE, BASE_ADVANCE]
 
     serve: float | None = Field(
         default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL
@@ -76,28 +73,10 @@ class StrokeImmutable(SQLModel):
 # Properties to receive on item creation
 class StrokeCreate(StrokeBase):
     def from_public(self, user_public_id: uuid.UUID) -> Stroke:
-        result = Stroke(
-            user_public_id=user_public_id,
-            serve=self.BASE_SKILL_NEW,
-            forehand_ground=self.BASE_SKILL_NEW,
-            background_ground=self.BASE_SKILL_NEW,
-            forehand_back_wall=self.BASE_SKILL_NEW,
-            backhand_back_wall=self.BASE_SKILL_NEW,
-            forehand_side_wall=self.BASE_SKILL_NEW,
-            backhand_side_wall=self.BASE_SKILL_NEW,
-            forehand_double_walls=self.BASE_SKILL_NEW,
-            backhand_double_walls=self.BASE_SKILL_NEW,
-            forehand_counter_wall=self.BASE_SKILL_NEW,
-            backhand_counter_wall=self.BASE_SKILL_NEW,
-            forehand_volley=self.BASE_SKILL_NEW,
-            backhand_volley=self.BASE_SKILL_NEW,
-            lob=self.BASE_SKILL_NEW,
-            smash=self.BASE_SKILL_NEW,
-            bandeja=self.BASE_SKILL_NEW,
-        )
+        strokes = Stroke(user_public_id=user_public_id)
         update_dict = self.model_dump(exclude_unset=True)
-        result.sqlmodel_update(update_dict)
-        return result
+        strokes.sqlmodel_update(update_dict)
+        return strokes
 
 
 # Properties to receive on item update

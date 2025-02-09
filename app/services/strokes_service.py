@@ -22,7 +22,7 @@ class StrokesService:
         repo = StrokesRepository(session)
         if stroke_in is None:
             stroke_in = StrokeCreate()
-        return await repo.create_stroke(stroke_in, user_public_id)
+        return await repo.create_strokes(stroke_in, user_public_id)
 
     async def update_strokes(
         self,

@@ -19,7 +19,7 @@ class StrokesRepository:
             raise NotFoundException(item="Padel strokes")
         return strokes
 
-    async def create_stroke(
+    async def create_strokes(
         self, stroke_in: StrokeCreate, user_public_id: uuid.UUID
     ) -> Stroke:
         stroke_to_valid = stroke_in.from_public(user_public_id)

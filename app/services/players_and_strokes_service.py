@@ -17,9 +17,7 @@ class PlayersAndStrokesService:
         try:
             player = await self._create_player(session, player_in)
             strokes = await self._create_strokes(session, player_in)
-            # All data that needs to be refreshed must be in the list
             items_to_refresh = [player, strokes]
-            # This is the final function (refresh are done)
             await self._finish_transaction(session, items_to_refresh)
             return player
         except IntegrityError:
@@ -34,7 +32,6 @@ class PlayersAndStrokesService:
     ) -> Player:
         service_player = PlayersService()
         player = await service_player.create_player(session, player_in)
-        # The commit is not made because it is not the final function
         return player
 
     async def _create_strokes(
@@ -44,7 +41,6 @@ class PlayersAndStrokesService:
         stroke = await service_strokes.create_strokes(
             session, None, player_in.user_public_id
         )
-        # The commit is not made because it is not the final function
         return stroke
 
     async def _finish_transaction(
