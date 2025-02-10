@@ -8,8 +8,8 @@ from app.services.players_service import PlayersService
 from app.utilities.dependencies import SessionDep
 from app.utilities.messages import (
     PLAYERS_GET_RESPONSES,
+    PLAYERS_PATCH_RESPONSES,
     PLAYERS_POST_RESPONSES,
-    PLAYERS_PUT_RESPONSES,
 )
 
 router = APIRouter()
@@ -30,11 +30,11 @@ async def create_player(*, session: SessionDep, player_in: PlayerCreate) -> Any:
     return await service.create_player(session, player_in)
 
 
-@router.put(
+@router.patch(
     "/",
     response_model=PlayerPublic,
     status_code=status.HTTP_200_OK,
-    responses={**PLAYERS_PUT_RESPONSES},  # type: ignore[dict-item]
+    responses={**PLAYERS_PATCH_RESPONSES},  # type: ignore[dict-item]
 )
 async def update_player(
     *,

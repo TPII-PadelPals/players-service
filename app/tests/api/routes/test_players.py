@@ -73,7 +73,7 @@ async def test_update_player_no_address(
         "latitude": 0.10,
         "longitude": 0.20,
     }
-    response = await async_client.put(
+    response = await async_client.patch(
         f"{settings.API_V1_STR}/players/",
         headers=x_api_key_header,
         json=put_data,
@@ -116,7 +116,7 @@ async def test_update_player_with_address(
         "zone_km": 10,
         "zone_location": "Paseo Colón 850",
     }
-    response = await async_client.put(
+    response = await async_client.patch(
         f"{settings.API_V1_STR}/players/",
         headers=x_api_key_header,
         json=put_data,
@@ -139,7 +139,7 @@ async def test_update_player_not_found_returns_responds_404(
     async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
     put_data = {"time_availability": 5}
-    response = await async_client.put(
+    response = await async_client.patch(
         f"{settings.API_V1_STR}/players/",
         headers=x_api_key_header,
         json=put_data,
@@ -164,7 +164,7 @@ async def test_update_player_with_time_availability_more_than_seven_responds_422
     _created_player = response_post.json()
 
     put_data = {"time_availability": 8}
-    response = await async_client.put(
+    response = await async_client.patch(
         f"{settings.API_V1_STR}/players/",
         headers=x_api_key_header,
         json=put_data,
@@ -190,7 +190,7 @@ async def test_update_player_with_time_availability_less_than_1_responds_422(
     _created_player = response_post.json()
 
     put_data = {"time_availability": 0}
-    response = await async_client.put(
+    response = await async_client.patch(
         f"{settings.API_V1_STR}/players/",
         headers=x_api_key_header,
         json=put_data,
