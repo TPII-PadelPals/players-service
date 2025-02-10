@@ -1,4 +1,5 @@
 import uuid
+from typing import Any
 
 from httpx import AsyncClient
 
@@ -92,11 +93,11 @@ async def test_update_player_no_address(
 
 
 async def test_update_player_with_address(
-    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch: Any
 ) -> None:
     GET_COORDS_RESULT = (0.4, 0.3)
 
-    async def mock_get_coordinates(_self, _: str):
+    async def mock_get_coordinates(_self: Any, _: str) -> tuple[float, float]:
         return GET_COORDS_RESULT
 
     monkeypatch.setattr(GoogleService, "get_coordinates", mock_get_coordinates)
