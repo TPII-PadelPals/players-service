@@ -58,4 +58,6 @@ async def read_player(session: SessionDep, user_public_id: uuid.UUID) -> PlayerP
     """
     Get Player by Public ID.
     """
-    return await service.read_player(session, user_public_id)
+    player = await service.read_player(session, user_public_id)
+    player_public = player.to_public()
+    return player_public

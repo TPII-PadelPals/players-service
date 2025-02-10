@@ -35,6 +35,11 @@ class PlayerUpdate(PlayerBase):
     pass
 
 
+# Properties to return via API, id is always required
+class PlayerPublic(PlayerBase, PlayerImmutable):
+    pass
+
+
 # Database model, database table inferred from class name
 class Player(PlayerBase, PlayerImmutable, table=True):
     __tablename__ = "players"
@@ -45,7 +50,7 @@ class Player(PlayerBase, PlayerImmutable, table=True):
         UniqueConstraint("user_public_id", name="uq_player_constraint"),
     )
 
-
-# Properties to return via API, id is always required
-class PlayerPublic(PlayerBase, PlayerImmutable):
-    pass
+    def to_public(self) -> PlayerPublic:
+        data = self.model_dump()
+        public = PlayerPublic(**data)
+        return public
