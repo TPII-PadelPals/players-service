@@ -12,7 +12,7 @@ class PlayersRepository:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def _commit_with_exception_handling(self):
+    async def _commit_with_exception_handling(self) -> None:
         try:
             await self.session.commit()
         except IntegrityError as e:
