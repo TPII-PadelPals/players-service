@@ -32,9 +32,7 @@ async def test_create_and_get_strokes(session: AsyncSession) -> None:
     user_public_id = uuid.uuid4()
     service = StrokesService()
     info_strokes = None
-    stroke_created = await service.create_strokes(
-        session, info_strokes, user_public_id
-    )
+    stroke_created = await service.create_strokes(session, info_strokes, user_public_id)
     await session.commit()
     await session.refresh(stroke_created)
     # test

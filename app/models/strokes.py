@@ -67,7 +67,9 @@ class StrokeBase(SQLModel):
 
 # Shared private properties
 class StrokeImmutable(SQLModel):
-    user_public_id: uuid.UUID = Field(foreign_key="players.user_public_id")
+    user_public_id: uuid.UUID = Field(
+        foreign_key="players.user_public_id", ondelete="CASCADE"
+    )
 
 
 # Properties to receive on item creation
@@ -90,7 +92,6 @@ class Stroke(StrokeBase, StrokeImmutable, table=True):
     id: int | None = Field(default=None, primary_key=True)
 
     __table_args__ = (UniqueConstraint("user_public_id", name="uq_stroke_constraint"),)
-
 
     def to_public(self) -> StrokePublic:
         data = self.model_dump()
