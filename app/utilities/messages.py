@@ -57,7 +57,7 @@ PLAYERS_PUT_RESPONSES = {
 PLAYERS_GET_RESPONSES = {**PLAYER_NOT_FOUND}
 
 STROKES_NOT_FOUND = {
-    status.HTTP_404_NOT_FOUND: {"description": "Player (of the strokes) not found."}
+    status.HTTP_404_NOT_FOUND: {"description": "Padel strokes not found."}
 }
 
 STROKES_PUT_RESPONSES = {
