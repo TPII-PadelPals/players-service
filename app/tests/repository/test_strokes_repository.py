@@ -3,23 +3,11 @@ import uuid
 import pytest
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.models.player import Player, PlayerCreate
 from app.models.strokes import StrokeCreate, StrokeUpdate
-from app.repository.players_repository import PlayersRepository
 from app.repository.strokes_repository import StrokesRepository
 from app.services.strokes_service import StrokesService
+from app.tests.utils.utils import create_player
 from app.utilities.exceptions import NotFoundException
-
-
-async def create_player(session: AsyncSession, user_public_id: uuid.UUID) -> Player:
-    user_public_id_str = str(user_public_id)
-    telegram_id = 10103030
-    repo = PlayersRepository(session)
-    player_create = PlayerCreate(
-        user_public_id=user_public_id_str, telegram_id=telegram_id
-    )
-    player = await repo.create_player(player_create)
-    return player
 
 
 async def test_create_strokes(session: AsyncSession) -> None:
