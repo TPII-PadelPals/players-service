@@ -17,9 +17,9 @@ class PlayersService:
     async def update_player(
         self, session: SessionDep, user_public_id: UUID, player_in: PlayerUpdate
     ) -> Player:
-        if player_in.zone_location:
+        if player_in.address:
             service = GoogleService()
-            longitude, latitude = await service.get_coordinates(player_in.zone_location)
+            longitude, latitude = await service.get_coordinates(player_in.address)
             player_in.longitude = longitude
             player_in.latitude = latitude
         repo = PlayersRepository(session)
