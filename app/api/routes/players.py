@@ -4,15 +4,11 @@ from typing import Any
 from fastapi import APIRouter, status
 
 from app.models.player import PlayerCreate, PlayerPublic, PlayerUpdate
-from app.models.player_availability import (
-    PlayerAvailabilityPublic,
-)
 from app.services.players_and_strokes_service import PlayersAndStrokesService
 from app.services.players_availability_service import PlayersAvailabilityService
 from app.services.players_service import PlayersService
 from app.utilities.dependencies import SessionDep
 from app.utilities.messages import (
-    PLAYERS_AVAILABILITY_POST_RESPONSES,
     PLAYERS_GET_RESPONSES,
     PLAYERS_PATCH_RESPONSES,
     PLAYERS_POST_RESPONSES,
@@ -73,22 +69,3 @@ async def read_player(session: SessionDep, user_public_id: uuid.UUID) -> Any:
     Get Player by Public ID.
     """
     return await service.read_player(session, user_public_id)
-
-
-@router.post(
-    "/{user_public_id}/availability",
-    response_model=PlayerAvailabilityPublic,
-    status_code=status.HTTP_201_CREATED,
-    responses={**PLAYERS_AVAILABILITY_POST_RESPONSES},  # type: ignore[dict-item]
-)
-async def create_player_availability(
-    *,
-    session: SessionDep,
-    user_public_id: uuid.UUID,
-) -> Any:
-    """
-    Create new player availability.
-    """
-    return await player_availability_service.create_player_availability(
-        session, user_public_id
-    )

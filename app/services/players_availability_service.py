@@ -15,4 +15,4 @@ class PlayersAvailabilityService:
     ) -> PlayerAvailabilityPublic:
         repo = PlayersAvailabilityRepository(session)
         player_availability = await repo.create_player_availability(user_public_id)
-        return player_availability.model_dump()
+        return player_availability

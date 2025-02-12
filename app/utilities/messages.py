@@ -57,16 +57,6 @@ PLAYERS_PATCH_RESPONSES = {
 PLAYERS_GET_RESPONSES = {**PLAYER_NOT_FOUND}
 
 
-PLAYER_AVAILABILITY_ALREADY_EXISTS = {
-    status.HTTP_409_CONFLICT: {"description": "Player availability already exists."}
-}
-
-PLAYERS_AVAILABILITY_POST_RESPONSES = {
-    status.HTTP_201_CREATED: {"description": "Player availability created"},
-    **PLAYER_AVAILABILITY_ALREADY_EXISTS,
-}
-
-
 STROKES_NOT_FOUND = {
     status.HTTP_404_NOT_FOUND: {"description": "Padel strokes not found."}
 }
