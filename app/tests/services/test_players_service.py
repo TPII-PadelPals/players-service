@@ -14,6 +14,8 @@ async def test_create_player_service(session: AsyncSession) -> None:
     player_create = PlayerCreate(user_public_id=user_public_id, telegram_id=telegram_id)
 
     player = await player_service.create_player(session, player_create)
+    await session.commit()
+    await session.refresh(player)
 
     assert player.user_public_id == player_create.user_public_id
     assert player.telegram_id == player_create.telegram_id

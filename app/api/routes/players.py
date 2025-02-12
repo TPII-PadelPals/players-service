@@ -7,14 +7,15 @@ from app.models.player import PlayerCreate, PlayerPublic, PlayerUpdate
 from app.models.player_availability import (
     PlayerAvailabilityPublic,
 )
+from app.services.players_and_strokes_service import PlayersAndStrokesService
 from app.services.players_availability_service import PlayersAvailabilityService
 from app.services.players_service import PlayersService
 from app.utilities.dependencies import SessionDep
 from app.utilities.messages import (
     PLAYERS_AVAILABILITY_POST_RESPONSES,
     PLAYERS_GET_RESPONSES,
+    PLAYERS_PATCH_RESPONSES,
     PLAYERS_POST_RESPONSES,
-    PLAYERS_PUT_RESPONSES,
 )
 
 router = APIRouter()
@@ -33,7 +34,8 @@ async def create_player(*, session: SessionDep, player_in: PlayerCreate) -> Any:
     """
     Create new player.
     """
-    player = await service.create_player(session, player_in)
+    service_aux = PlayersAndStrokesService()
+    player = await service_aux.create_player(session, player_in)
     await player_availability_service.create_player_availability(
         session, player_in.user_public_id
     )
@@ -42,11 +44,11 @@ async def create_player(*, session: SessionDep, player_in: PlayerCreate) -> Any:
     return player
 
 
-@router.put(
+@router.patch(
     "/",
     response_model=PlayerPublic,
     status_code=status.HTTP_200_OK,
-    responses={**PLAYERS_PUT_RESPONSES},  # type: ignore[dict-item]
+    responses={**PLAYERS_PATCH_RESPONSES},  # type: ignore[dict-item]
 )
 async def update_player(
     *,
@@ -66,7 +68,7 @@ async def update_player(
     status_code=status.HTTP_200_OK,
     responses={**PLAYERS_GET_RESPONSES},  # type: ignore[dict-item]
 )
-async def read_player(session: SessionDep, user_public_id: uuid.UUID) -> PlayerPublic:
+async def read_player(session: SessionDep, user_public_id: uuid.UUID) -> Any:
     """
     Get Player by Public ID.
     """

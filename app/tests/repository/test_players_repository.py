@@ -16,6 +16,8 @@ async def test_create_player(session: AsyncSession) -> None:
     player_create = PlayerCreate(user_public_id=user_public_id, telegram_id=telegram_id)
 
     player = await repo.create_player(player_create)
+    await session.commit()
+    await session.refresh(player)
 
     assert player.user_public_id == player_create.user_public_id
     assert player.telegram_id == player_create.telegram_id
@@ -36,14 +38,17 @@ async def test_create_player_with_user_public_id_already_exists_raises_exception
 
     player_create = PlayerCreate(user_public_id=user_public_id, telegram_id=30304040)
 
-    await repo.create_player(player_create)
+    player = await repo.create_player(player_create)
+    await session.commit()
+    await session.refresh(player)
 
     with pytest.raises(NotUniqueException) as e:
         player_create = PlayerCreate(
             user_public_id=duplicated_user_p_id, telegram_id=50509090
         )
         await repo.create_player(player_create)
-
+        await session.commit()
+    await session.rollback()
     assert e.value.detail == "Player already exists."
 
 
@@ -55,6 +60,8 @@ async def test_update_player(session: AsyncSession) -> None:
     player_create = PlayerCreate(user_public_id=user_public_id, telegram_id=telegram_id)
 
     player = await repo.create_player(player_create)
+    await session.commit()
+    await session.refresh(player)
 
     time_availability = 5
 
