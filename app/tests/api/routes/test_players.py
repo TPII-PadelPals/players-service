@@ -67,7 +67,7 @@ async def test_update_player_no_address(
     )
     created_player = response_post.json()
 
-    put_data = {
+    patch_data = {
         "time_availability": 5,
         "zone_km": 10,
         "latitude": 0.10,
@@ -76,7 +76,7 @@ async def test_update_player_no_address(
     response = await async_client.patch(
         f"{settings.API_V1_STR}/players/",
         headers=x_api_key_header,
-        json=put_data,
+        json=patch_data,
         params={"user_public_id": created_player["user_public_id"]},
     )
 
@@ -85,11 +85,11 @@ async def test_update_player_no_address(
 
     assert content["user_public_id"] == created_player["user_public_id"]
     assert content["telegram_id"] == created_player["telegram_id"]
-    assert content["time_availability"] == put_data["time_availability"]
-    assert content["zone_km"] == put_data["zone_km"]
+    assert content["time_availability"] == patch_data["time_availability"]
+    assert content["zone_km"] == patch_data["zone_km"]
     assert content["zone_location"] is None
-    assert content["latitude"] == put_data["latitude"]
-    assert content["longitude"] == put_data["longitude"]
+    assert content["latitude"] == patch_data["latitude"]
+    assert content["longitude"] == patch_data["longitude"]
 
 
 async def test_update_player_with_address(
@@ -111,7 +111,7 @@ async def test_update_player_with_address(
     )
     created_player = response_post.json()
 
-    put_data = {
+    patch_data = {
         "time_availability": 5,
         "zone_km": 10,
         "zone_location": "Paseo Colón 850",
@@ -119,7 +119,7 @@ async def test_update_player_with_address(
     response = await async_client.patch(
         f"{settings.API_V1_STR}/players/",
         headers=x_api_key_header,
-        json=put_data,
+        json=patch_data,
         params={"user_public_id": created_player["user_public_id"]},
     )
 
@@ -128,9 +128,9 @@ async def test_update_player_with_address(
 
     assert content["user_public_id"] == created_player["user_public_id"]
     assert content["telegram_id"] == created_player["telegram_id"]
-    assert content["time_availability"] == put_data["time_availability"]
-    assert content["zone_km"] == put_data["zone_km"]
-    assert content["zone_location"] == put_data["zone_location"]
+    assert content["time_availability"] == patch_data["time_availability"]
+    assert content["zone_km"] == patch_data["zone_km"]
+    assert content["zone_location"] == patch_data["zone_location"]
     assert content["latitude"] == GET_COORDS_RESULT[1]
     assert content["longitude"] == GET_COORDS_RESULT[0]
 
@@ -138,11 +138,11 @@ async def test_update_player_with_address(
 async def test_update_player_not_found_returns_responds_404(
     async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
-    put_data = {"time_availability": 5}
+    patch_data = {"time_availability": 5}
     response = await async_client.patch(
         f"{settings.API_V1_STR}/players/",
         headers=x_api_key_header,
-        json=put_data,
+        json=patch_data,
         params={"user_public_id": str(uuid.uuid4())},
     )
 
@@ -163,11 +163,11 @@ async def test_update_player_with_time_availability_more_than_seven_responds_422
     )
     _created_player = response_post.json()
 
-    put_data = {"time_availability": 8}
+    patch_data = {"time_availability": 8}
     response = await async_client.patch(
         f"{settings.API_V1_STR}/players/",
         headers=x_api_key_header,
-        json=put_data,
+        json=patch_data,
         params={"user_public_id": user_public_id},
     )
 
@@ -189,11 +189,11 @@ async def test_update_player_with_time_availability_less_than_1_responds_422(
     )
     _created_player = response_post.json()
 
-    put_data = {"time_availability": 0}
+    patch_data = {"time_availability": 0}
     response = await async_client.patch(
         f"{settings.API_V1_STR}/players/",
         headers=x_api_key_header,
-        json=put_data,
+        json=patch_data,
         params={"user_public_id": user_public_id},
     )
 
