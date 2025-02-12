@@ -12,6 +12,8 @@ from app.core.config import test_settings
 from app.core.db import get_async_engine, init_db
 from app.main import app
 from app.models.item import Item
+from app.models.player import Player
+from app.models.strokes import Stroke
 from app.tests.utils.utils import get_x_api_key_header
 from app.utilities.dependencies import get_db
 
@@ -23,6 +25,10 @@ async def db() -> AsyncGenerator[AsyncSession, None]:
         await init_db(db_url)
         yield session
         statement = delete(Item)
+        await session.exec(statement)  # type: ignore[call-overload]
+        statement = delete(Stroke)
+        await session.exec(statement)  # type: ignore[call-overload]
+        statement = delete(Player)
         await session.exec(statement)  # type: ignore[call-overload]
         await session.commit()
 
