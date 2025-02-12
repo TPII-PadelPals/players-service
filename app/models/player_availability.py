@@ -14,12 +14,8 @@ class PlayerAvailabilityBase(SQLModel):
     is_available: bool = Field(default=False)
 
     @classmethod
-    def get_begin_day(cls) -> int:
-        return cls._BEGIN_DAY
-
-    @classmethod
-    def get_last_day(cls) -> int:
-        return cls._LAST_DAY
+    def range_valids_day(cls) -> range:
+        return range(cls._BEGIN_DAY, cls._LAST_DAY + 1)
 
 
 # Shared private properties

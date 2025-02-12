@@ -16,10 +16,8 @@ class PlayersAvailabilityRepository:
     async def create_player_availability(
         self, user_public_id: UUID
     ) -> PlayerAvailabilityPublic:
-        begin_day = PlayerAvailability.get_begin_day()
-        last_day = PlayerAvailability.get_last_day()
         player_availabilities = []
-        for availability_day in range(begin_day, last_day + 1):
+        for availability_day in PlayerAvailability.range_valids_day():
             player_availability = PlayerAvailability(
                 user_public_id=user_public_id, week_day=availability_day
             )
