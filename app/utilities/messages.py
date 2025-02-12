@@ -23,7 +23,7 @@ PLAYERS_POST_RESPONSES = {
 
 PLAYER_NOT_FOUND = {status.HTTP_404_NOT_FOUND: {"description": "Player not found."}}
 
-PLAYERS_PUT_500_RESPONSES = {
+PLAYERS_PATCH_500_RESPONSES = {
     "description": "",
     "content": {
         "application/json": {
@@ -48,9 +48,9 @@ PLAYERS_PUT_500_RESPONSES = {
     },
 }
 
-PLAYERS_PUT_RESPONSES = {
+PLAYERS_PATCH_RESPONSES = {
     status.HTTP_200_OK: {"description": "Player updated"},
-    status.HTTP_500_INTERNAL_SERVER_ERROR: PLAYERS_PUT_500_RESPONSES,
+    status.HTTP_500_INTERNAL_SERVER_ERROR: PLAYERS_PATCH_500_RESPONSES,
     **PLAYER_NOT_FOUND,
 }
 
