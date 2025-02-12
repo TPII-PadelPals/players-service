@@ -10,7 +10,7 @@ class PlayersUtils:
 
     async def flush_with_exception_handling(
         self, constraint_name: str, class_name: str
-    ):
+    ) -> None:
         try:
             await self.session.flush()
         except IntegrityError as e:
