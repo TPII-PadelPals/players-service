@@ -10,8 +10,8 @@ class PlayerBase(SQLModel):
     MIN_TIME_AVAILABILITY: ClassVar[int] = 1
     MAX_TIME_AVAILABILITY: ClassVar[int] = 7
 
-    zone_km: int | None = Field(default=None)
-    zone_location: str | None = Field(default=None)
+    search_range_km: int | None = Field(default=None)
+    address: str | None = Field(default=None)
     latitude: float | None = Field(default=None)
     longitude: float | None = Field(default=None)
     time_availability: int | None = Field(

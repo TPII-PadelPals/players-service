@@ -23,8 +23,8 @@ async def test_create_player(
 
     assert content["user_public_id"] == user_public_id
     assert content["telegram_id"] == telegram_id
-    assert content["zone_km"] is None
-    assert content["zone_location"] is None
+    assert content["search_range_km"] is None
+    assert content["address"] is None
     assert content["latitude"] is None
     assert content["longitude"] is None
     assert content["time_availability"] is None
@@ -68,7 +68,7 @@ async def test_update_player_no_address(
 
     put_data = {
         "time_availability": 5,
-        "zone_km": 10,
+        "search_range_km": 10,
         "latitude": 0.10,
         "longitude": 0.20,
     }
@@ -85,8 +85,8 @@ async def test_update_player_no_address(
     assert content["user_public_id"] == created_player["user_public_id"]
     assert content["telegram_id"] == created_player["telegram_id"]
     assert content["time_availability"] == put_data["time_availability"]
-    assert content["zone_km"] == put_data["zone_km"]
-    assert content["zone_location"] is None
+    assert content["search_range_km"] == put_data["search_range_km"]
+    assert content["address"] is None
     assert content["latitude"] == put_data["latitude"]
     assert content["longitude"] == put_data["longitude"]
 
@@ -112,8 +112,8 @@ async def test_update_player_with_address(
 
     put_data = {
         "time_availability": 5,
-        "zone_km": 10,
-        "zone_location": "Paseo Colón 850",
+        "search_range_km": 10,
+        "address": "Paseo Colón 850",
     }
     response = await async_client.put(
         f"{settings.API_V1_STR}/players/",
@@ -128,8 +128,8 @@ async def test_update_player_with_address(
     assert content["user_public_id"] == created_player["user_public_id"]
     assert content["telegram_id"] == created_player["telegram_id"]
     assert content["time_availability"] == put_data["time_availability"]
-    assert content["zone_km"] == put_data["zone_km"]
-    assert content["zone_location"] == put_data["zone_location"]
+    assert content["search_range_km"] == put_data["search_range_km"]
+    assert content["address"] == put_data["address"]
     assert content["latitude"] == GET_COORDS_RESULT[1]
     assert content["longitude"] == GET_COORDS_RESULT[0]
 
