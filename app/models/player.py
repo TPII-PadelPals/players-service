@@ -49,8 +49,3 @@ class Player(PlayerBase, PlayerImmutable, table=True):
         Index("id", "user_public_id"),
         UniqueConstraint("user_public_id", name="uq_player_constraint"),
     )
-
-    def to_public(self) -> PlayerPublic:
-        data = self.model_dump()
-        public = PlayerPublic(**data)
-        return public
