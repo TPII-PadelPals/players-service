@@ -54,10 +54,8 @@ async def update_player(
     status_code=status.HTTP_200_OK,
     responses={**PLAYERS_GET_RESPONSES},  # type: ignore[dict-item]
 )
-async def read_player(session: SessionDep, user_public_id: uuid.UUID) -> PlayerPublic:
+async def read_player(session: SessionDep, user_public_id: uuid.UUID) -> Any:
     """
     Get Player by Public ID.
     """
-    player = await service.read_player(session, user_public_id)
-    player_public = player.to_public()
-    return player_public
+    return await service.read_player(session, user_public_id)
