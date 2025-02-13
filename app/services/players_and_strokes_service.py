@@ -27,7 +27,7 @@ class PlayerCreationService:
         try:
             player = await self.players_service.create_player(session, player_in)
             strokes = await self.strokes_service.create_strokes(
-                session, None, player_in.user_public_id
+                session, stroke_in=None, user_public_id=player_in.user_public_id
             )
             player_availability = (
                 await self.player_availability_service.create_player_availability(
