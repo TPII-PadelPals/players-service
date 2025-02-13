@@ -5,6 +5,8 @@ from httpx import AsyncClient
 
 from app.core.config import settings
 from app.services.google_service import GoogleService
+from app.services.players_availability_service import PlayersAvailabilityService
+from app.tests.utils.players import mock_raise_not_unique_exception
 from app.utilities.exceptions import NotUniqueException
 
 
@@ -53,6 +55,42 @@ async def test_create_player_user_public_id_already_exists_responds_409(
     assert (
         response_detail == expected_detail
     ), f"Expected '{expected_detail}' but got '{response_detail}'"
+
+
+async def test_create_player_when_player_availability_service_raise_exception_responds_409(
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch: Any
+) -> None:
+    monkeypatch.setattr(
+        PlayersAvailabilityService,
+        "create_player_availability",
+        mock_raise_not_unique_exception("player availability"),
+    )
+
+    user_public_id = str(uuid.uuid4())
+
+    data = {"user_public_id": user_public_id, "telegram_id": 11112222}
+    response = await async_client.post(
+        f"{settings.API_V1_STR}/players/", headers=x_api_key_header, json=data
+    )
+
+    assert response.status_code == 409
+
+    response_detail = response.json().get("detail")
+    expected_detail = NotUniqueException("player availability").detail
+
+    assert (
+        response_detail == expected_detail
+    ), f"Expected '{expected_detail}' but got '{response_detail}'"
+
+    # response = await async_client.get(
+    #     f"{settings.API_V1_STR}/players/{user_public_id}",
+    #     headers=x_api_key_header,
+    #     params={"user_public_id": str(user_public_id)},
+    # )
+    # assert response.status_code == 200
+    # pytest.set_trace()
+    # content = response.json()
+    # assert content["detail"] == "Player not found."
 
 
 async def test_update_player_no_address(
