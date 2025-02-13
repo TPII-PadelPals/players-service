@@ -82,15 +82,15 @@ async def test_create_player_when_player_availability_service_raise_exception_re
         response_detail == expected_detail
     ), f"Expected '{expected_detail}' but got '{response_detail}'"
 
-    # response = await async_client.get(
-    #     f"{settings.API_V1_STR}/players/{user_public_id}",
-    #     headers=x_api_key_header,
-    #     params={"user_public_id": str(user_public_id)},
-    # )
-    # assert response.status_code == 200
-    # pytest.set_trace()
-    # content = response.json()
-    # assert content["detail"] == "Player not found."
+    response = await async_client.get(
+        f"{settings.API_V1_STR}/players/{user_public_id}",
+        headers=x_api_key_header,
+        params={"user_public_id": str(user_public_id)},
+    )
+    assert response.status_code == 404
+
+    content = response.json()
+    assert content["detail"] == "Player not found."
 
 
 async def test_update_player_no_address(

@@ -21,7 +21,7 @@ class PlayersAvailabilityRepository:
             player_availability = PlayerAvailability(
                 user_public_id=user_public_id, week_day=availability_day
             )
-            player_availabilities.append(player_availability.model_dump())
+            player_availabilities.append(player_availability)
             self.session.add(player_availability)
         await PlayersUtils(self.session).flush_with_exception_handling(
             constraint_name="uq_player_availability_constraint",

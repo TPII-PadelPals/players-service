@@ -7,6 +7,7 @@ from app.models.player import PlayerCreate, PlayerPublic, PlayerUpdate
 from app.services.players_and_strokes_service import PlayersAndStrokesService
 from app.services.players_availability_service import PlayersAvailabilityService
 from app.services.players_service import PlayersService
+from app.services.strokes_service import StrokesService
 from app.utilities.dependencies import SessionDep
 from app.utilities.messages import (
     PLAYERS_GET_RESPONSES,
@@ -30,13 +31,12 @@ async def create_player(*, session: SessionDep, player_in: PlayerCreate) -> Any:
     """
     Create new player.
     """
-    service_aux = PlayersAndStrokesService()
-    player = await service_aux.create_player(session, player_in)
-    await player_availability_service.create_player_availability(
-        session, player_in.user_public_id
+    service_aux = PlayersAndStrokesService(
+        players_service=PlayersService(),
+        strokes_service=StrokesService(),
+        player_availability_service=PlayersAvailabilityService(),
     )
-    await session.commit()
-    await session.refresh(player)
+    player = await service_aux.create_player(session, player_in)
     return player
 
 

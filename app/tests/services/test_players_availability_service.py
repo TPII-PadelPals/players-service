@@ -21,6 +21,8 @@ async def test_create_player_availability_days_are_all_unavailable(
         session, user_public_id
     )
     await session.commit()
+    for player_availabilities in player_availability.available_days:
+        await session.refresh(player_availabilities)
 
     assert len(player_availability.available_days) == len(
         expected_player_availabilities
