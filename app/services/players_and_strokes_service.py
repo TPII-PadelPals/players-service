@@ -10,7 +10,7 @@ from app.utilities.dependencies import SessionDep
 from app.utilities.exceptions import NotUniqueException
 
 
-class PlayersAndStrokesService:
+class PlayerCreationService:
     def __init__(
         self,
         players_service: PlayersService,

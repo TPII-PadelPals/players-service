@@ -3,7 +3,7 @@ import uuid
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.player import PlayerCreate
-from app.services.players_and_strokes_service import PlayersAndStrokesService
+from app.services.players_and_strokes_service import PlayerCreationService
 from app.services.players_availability_service import PlayersAvailabilityService
 from app.services.players_service import PlayersService
 from app.services.strokes_service import StrokesService
@@ -60,7 +60,7 @@ async def test_generate_strokes_whit_player(session: AsyncSession) -> None:
     telegram_id = 10103030
 
     strokes_service = StrokesService()
-    players_and_strokes_service = PlayersAndStrokesService(
+    players_and_strokes_service = PlayerCreationService(
         players_service=PlayersService(),
         strokes_service=StrokesService(),
         player_availability_service=PlayersAvailabilityService(),
