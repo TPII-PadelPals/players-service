@@ -63,7 +63,9 @@ async def test_create_player_when_player_availability_service_raise_exception_re
     monkeypatch.setattr(
         PlayersAvailabilityService,
         "create_player_availability",
-        mock_raise_not_unique_exception("player availability"),
+        lambda *_args, **_kwargs: mock_raise_not_unique_exception(
+            "player availability"
+        ),
     )
 
     user_public_id = str(uuid.uuid4())
