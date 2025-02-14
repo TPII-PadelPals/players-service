@@ -3,8 +3,8 @@ import uuid
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.player import PlayerCreate
-from app.services.players_and_strokes_service import PlayerCreationService
 from app.services.players_availability_service import PlayersAvailabilityService
+from app.services.players_creation_service import PlayerCreationService
 from app.services.players_service import PlayersService
 from app.services.strokes_service import StrokesService
 from app.tests.utils.utils import create_player
@@ -60,7 +60,7 @@ async def test_generate_strokes_whit_player(session: AsyncSession) -> None:
     telegram_id = 10103030
 
     strokes_service = StrokesService()
-    players_and_strokes_service = PlayerCreationService(
+    players_creation_service = PlayerCreationService(
         players_service=PlayersService(),
         strokes_service=StrokesService(),
         player_availability_service=PlayersAvailabilityService(),
@@ -69,7 +69,7 @@ async def test_generate_strokes_whit_player(session: AsyncSession) -> None:
         user_public_id=str(user_public_id), telegram_id=telegram_id
     )
     # test
-    _player = await players_and_strokes_service.create_player(session, player_create)
+    _player = await players_creation_service.create_player(session, player_create)
     strokes = await strokes_service.get_strokes(session, user_public_id)
     # assert
     for field in strokes.__dict__:

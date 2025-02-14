@@ -4,8 +4,8 @@ from typing import Any
 from fastapi import APIRouter, status
 
 from app.models.player import PlayerCreate, PlayerPublic, PlayerUpdate
-from app.services.players_and_strokes_service import PlayerCreationService
 from app.services.players_availability_service import PlayersAvailabilityService
+from app.services.players_creation_service import PlayerCreationService
 from app.services.players_service import PlayersService
 from app.services.strokes_service import StrokesService
 from app.utilities.dependencies import SessionDep
