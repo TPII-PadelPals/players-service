@@ -4,7 +4,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.player_availability import (
     PlayerAvailability,
-    PlayerAvailabilityPublic,
+    PlayerAvailabilityList,
 )
 from app.utilities.repository.players_utils import PlayersUtils
 
@@ -15,7 +15,7 @@ class PlayersAvailabilityRepository:
 
     async def create_player_availability(
         self, user_public_id: UUID
-    ) -> PlayerAvailabilityPublic:
+    ) -> PlayerAvailabilityList:
         player_availabilities = []
         for week_day in PlayerAvailability.valid_days():
             player_availability = PlayerAvailability(
@@ -27,4 +27,4 @@ class PlayersAvailabilityRepository:
             constraint_name="uq_player_availability_constraint",
             class_name="player availability",
         )
-        return PlayerAvailabilityPublic(available_days=player_availabilities)
+        return PlayerAvailabilityList(available_days=player_availabilities)

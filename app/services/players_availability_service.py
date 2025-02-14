@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from app.models.player_availability import (
-    PlayerAvailabilityPublic,
+    PlayerAvailabilityList,
 )
 from app.repository.players_availability_repository import PlayersAvailabilityRepository
 from app.utilities.dependencies import SessionDep
@@ -12,7 +12,7 @@ class PlayersAvailabilityService:
         self,
         session: SessionDep,
         user_public_id: UUID,
-    ) -> PlayerAvailabilityPublic:
+    ) -> PlayerAvailabilityList:
         repo = PlayersAvailabilityRepository(session)
         player_availability = await repo.create_player_availability(user_public_id)
         return player_availability

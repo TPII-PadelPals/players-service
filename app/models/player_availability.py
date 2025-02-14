@@ -49,6 +49,5 @@ class PlayerAvailability(
     )
 
 
-# Properties to return via API, id is always required
-class PlayerAvailabilityPublic(SQLModel):
+class PlayerAvailabilityList(SQLModel):
     available_days: list[PlayerAvailability]
