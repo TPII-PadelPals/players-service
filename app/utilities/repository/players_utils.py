@@ -19,3 +19,6 @@ class PlayersUtils:
                 raise NotUniqueException(class_name)
             else:
                 raise e
+        except Exception as e:
+            await self.session.rollback()
+            raise e
