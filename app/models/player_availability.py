@@ -1,3 +1,4 @@
+from enum import IntEnum
 from typing import ClassVar
 from uuid import UUID
 
@@ -5,17 +6,27 @@ from sqlalchemy import UniqueConstraint
 from sqlmodel import Field, Index, SQLModel
 
 
+class WeekDay(IntEnum):
+    MONDAY = 1
+    TUESDAY = 2
+    WEDNESDAY = 3
+    THURSDAY = 4
+    FRIDAY = 5
+    SATURDAY = 6
+    SUNDAY = 7
+
+
 # Shared properties
 class PlayerAvailabilityBase(SQLModel):
-    _BEGIN_DAY: ClassVar[int] = 1
-    _LAST_DAY: ClassVar[int] = 7
+    _BEGIN_DAY: ClassVar[int] = WeekDay.MONDAY
+    _LAST_DAY: ClassVar[int] = WeekDay.SUNDAY
 
-    week_day: int = Field(default=None)
+    week_day: WeekDay = Field(default=WeekDay.MONDAY)
     is_available: bool = Field(default=False)
 
     @classmethod
-    def range_valids_day(cls) -> range:
-        return range(cls._BEGIN_DAY, cls._LAST_DAY + 1)
+    def valid_days(cls) -> list[WeekDay]:
+        return list(WeekDay)
 
 
 # Shared private properties

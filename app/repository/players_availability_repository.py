@@ -17,9 +17,9 @@ class PlayersAvailabilityRepository:
         self, user_public_id: UUID
     ) -> PlayerAvailabilityPublic:
         player_availabilities = []
-        for availability_day in PlayerAvailability.range_valids_day():
+        for week_day in PlayerAvailability.valid_days():
             player_availability = PlayerAvailability(
-                user_public_id=user_public_id, week_day=availability_day
+                user_public_id=user_public_id, week_day=week_day
             )
             player_availabilities.append(player_availability)
             self.session.add(player_availability)
