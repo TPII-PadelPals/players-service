@@ -13,7 +13,7 @@ ITEM_RESPONSES = {**ITEM_NOT_FOUND, **NOT_ENOUGH_PERMISSIONS}
 
 # Player responses
 PLAYER_ALREADY_EXISTS = {
-    status.HTTP_409_CONFLICT: {"description": "User public id already exists."}
+    status.HTTP_409_CONFLICT: {"description": "Player already exists."}
 }
 
 PLAYERS_POST_RESPONSES = {
@@ -55,6 +55,7 @@ PLAYERS_PATCH_RESPONSES = {
 }
 
 PLAYERS_GET_RESPONSES = {**PLAYER_NOT_FOUND}
+
 
 STROKES_NOT_FOUND = {
     status.HTTP_404_NOT_FOUND: {"description": "Padel strokes not found."}

@@ -4,8 +4,10 @@ from typing import Any
 from fastapi import APIRouter, status
 
 from app.models.player import PlayerCreate, PlayerPublic, PlayerUpdate
-from app.services.players_and_strokes_service import PlayersAndStrokesService
+from app.services.players_availability_service import PlayersAvailabilityService
+from app.services.players_creation_service import PlayerCreationService
 from app.services.players_service import PlayersService
+from app.services.strokes_service import StrokesService
 from app.utilities.dependencies import SessionDep
 from app.utilities.messages import (
     PLAYERS_GET_RESPONSES,
@@ -28,8 +30,13 @@ async def create_player(*, session: SessionDep, player_in: PlayerCreate) -> Any:
     """
     Create new player.
     """
-    service_aux = PlayersAndStrokesService()
-    return await service_aux.create_player(session, player_in)
+    service_aux = PlayerCreationService(
+        players_service=PlayersService(),
+        strokes_service=StrokesService(),
+        player_availability_service=PlayersAvailabilityService(),
+    )
+    player = await service_aux.create_player(session, player_in)
+    return player
 
 
 @router.patch(
