@@ -6,7 +6,9 @@ from httpx import AsyncClient
 from app.core.config import settings
 from app.services.google_service import GoogleService
 from app.services.players_availability_service import PlayersAvailabilityService
-from app.tests.utils.players import mock_raise_not_unique_exception
+from app.tests.utils.players import (
+    mock_create_player_availability_raise_not_unique_exception,
+)
 from app.utilities.exceptions import NotUniqueException
 
 
@@ -63,9 +65,7 @@ async def test_create_player_when_player_availability_service_raise_exception_re
     monkeypatch.setattr(
         PlayersAvailabilityService,
         "create_player_availability",
-        lambda *_args, **_kwargs: mock_raise_not_unique_exception(
-            "player availability"
-        ),
+        mock_create_player_availability_raise_not_unique_exception,
     )
 
     user_public_id = str(uuid.uuid4())
