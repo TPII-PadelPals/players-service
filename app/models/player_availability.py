@@ -51,3 +51,11 @@ class PlayerAvailability(
 
 class PlayerAvailabilityList(SQLModel):
     available_days: list[PlayerAvailability]
+
+
+class PlayerAvailabilityUpdate(SQLModel):
+    available_days: list[PlayerAvailabilityBase]
+
+
+class PlayerAvailabilityListPublic(PlayerAvailabilityImmutable):
+    available_days: list[PlayerAvailabilityBase]

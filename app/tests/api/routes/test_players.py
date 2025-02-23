@@ -241,3 +241,40 @@ async def test_update_player_with_time_availability_less_than_1_responds_422(
     content = response.json()
     assert content["detail"][0]["loc"] == ["body", "time_availability"]
     assert content["detail"][0]["msg"] == "Input should be greater than or equal to 1"
+
+
+# async def test_update_player_availability_days(
+#     async_client: AsyncClient, x_api_key_header: dict[str, str]
+# ) -> None:
+#     user_public_id = str(uuid.uuid4())
+#     telegram_id = 10103030
+
+#     post_data = {"user_public_id": user_public_id, "telegram_id": telegram_id}
+#     response_post = await async_client.post(
+#         f"{settings.API_V1_STR}/players/", headers=x_api_key_header, json=post_data
+#     )
+#     created_player = response_post.json()
+
+#     patch_data = {
+#         "time_availability": 5,
+#         "search_range_km": 10,
+#         "latitude": 0.10,
+#         "longitude": 0.20,
+#     }
+#     response = await async_client.patch(
+#         f"{settings.API_V1_STR}/players/",
+#         headers=x_api_key_header,
+#         json=patch_data,
+#         params={"user_public_id": created_player["user_public_id"]},
+#     )
+
+#     assert response.status_code == 200
+#     content = response.json()
+
+#     assert content["user_public_id"] == created_player["user_public_id"]
+#     assert content["telegram_id"] == created_player["telegram_id"]
+#     assert content["time_availability"] == patch_data["time_availability"]
+#     assert content["search_range_km"] == patch_data["search_range_km"]
+#     assert content["address"] is None
+#     assert content["latitude"] == patch_data["latitude"]
+#     assert content["longitude"] == patch_data["longitude"]
