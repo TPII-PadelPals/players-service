@@ -10,6 +10,7 @@ from app.models.player_availability import (
     PlayerAvailabilityListPublic,
     PlayerAvailabilityUpdate,
 )
+from app.utilities.exceptions import NotFoundException
 from app.utilities.repository.players_utils import PlayersUtils
 
 
@@ -42,8 +43,12 @@ class PlayersAvailabilityRepository:
             PlayerAvailability.user_public_id == user_public_id
         )
         player_availabilities = await self.session.exec(query)
+        player_availabilities_list = player_availabilities.all()
 
-        for player_availability in player_availabilities:
+        if not len(player_availabilities_list):
+            raise NotFoundException(item="Player availability")
+
+        for player_availability in player_availabilities_list:
             for player_availability_in in player_availabilities_in.available_days:
                 if player_availability.week_day == player_availability_in.week_day:
                     update_dict = player_availability_in.model_dump(exclude_unset=True)

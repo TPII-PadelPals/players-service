@@ -247,7 +247,6 @@ async def test_update_player_with_time_availability_less_than_1_responds_422(
 # ***** Player Availability Enpoints Tests *****
 
 
-# @pytest.mark.skip()
 async def test_update_player_availability_days(
     async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
@@ -290,3 +289,27 @@ async def test_update_player_availability_days(
     assert (
         received_available_days == expected_available_days
     ), f"Expected {expected_available_days}, but got {received_available_days}"
+
+
+async def test_update_player_availability_not_found_returns_responds_404(
+    async_client: AsyncClient, x_api_key_header: dict[str, str]
+) -> None:
+    not_found_user_p_id = str(uuid.uuid4())
+
+    patch_data = {
+        "available_days": [
+            {"week_day": WeekDay.MONDAY.value, "is_available": True},
+            {"week_day": WeekDay.THURSDAY.value, "is_available": True},
+        ]
+    }
+
+    response = await async_client.patch(
+        f"{settings.API_V1_STR}/players/{not_found_user_p_id}/availability",
+        headers=x_api_key_header,
+        json=patch_data,
+        params={"user_public_id": not_found_user_p_id},
+    )
+
+    assert response.status_code == 404
+    content = response.json()
+    assert content["detail"] == "Player availability not found."
