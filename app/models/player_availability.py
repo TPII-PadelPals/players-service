@@ -53,7 +53,7 @@ class PlayerAvailabilityList(SQLModel):
     available_days: list[PlayerAvailability]
 
 
-class PlayerAvailabilityUpdate(SQLModel):
+class PlayerAvailabilityListUpdate(SQLModel):
     available_days: list[PlayerAvailabilityBase]
 
 

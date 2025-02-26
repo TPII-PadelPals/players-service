@@ -8,7 +8,7 @@ from app.models.player_availability import (
     PlayerAvailabilityBase,
     PlayerAvailabilityList,
     PlayerAvailabilityListPublic,
-    PlayerAvailabilityUpdate,
+    PlayerAvailabilityListUpdate,
 )
 from app.utilities.exceptions import NotFoundException
 from app.utilities.repository.players_utils import PlayersUtils
@@ -35,7 +35,9 @@ class PlayersAvailabilityRepository:
         return PlayerAvailabilityList(available_days=player_availabilities)
 
     async def update_player_availability(
-        self, user_public_id: UUID, player_availabilities_in: PlayerAvailabilityUpdate
+        self,
+        user_public_id: UUID,
+        player_availabilities_in: PlayerAvailabilityListUpdate,
     ) -> PlayerAvailabilityListPublic:
         player_availabilities_updated = []
 

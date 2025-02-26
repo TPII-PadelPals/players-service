@@ -6,7 +6,7 @@ from fastapi import APIRouter, status
 from app.models.player import PlayerCreate, PlayerPublic, PlayerUpdate
 from app.models.player_availability import (
     PlayerAvailabilityListPublic,
-    PlayerAvailabilityUpdate,
+    PlayerAvailabilityListUpdate,
 )
 from app.services.players_availability_service import PlayersAvailabilityService
 from app.services.players_creation_service import PlayerCreationService
@@ -88,7 +88,7 @@ async def update_player_availability(
     *,
     session: SessionDep,
     user_public_id: uuid.UUID,
-    player_availability_in: PlayerAvailabilityUpdate,
+    player_availability_in: PlayerAvailabilityListUpdate,
 ) -> Any:
     """
     Update player availability.
