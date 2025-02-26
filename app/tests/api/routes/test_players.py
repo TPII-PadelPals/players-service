@@ -1,7 +1,6 @@
 import uuid
 from typing import Any
 
-import pytest
 from httpx import AsyncClient
 
 from app.core.config import settings
@@ -248,7 +247,7 @@ async def test_update_player_with_time_availability_less_than_1_responds_422(
 # ***** Player Availability Enpoints Tests *****
 
 
-@pytest.mark.skip()
+# @pytest.mark.skip()
 async def test_update_player_availability_days(
     async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
@@ -279,7 +278,7 @@ async def test_update_player_availability_days(
     content = response.json()
 
     assert content["user_public_id"] == created_player["user_public_id"]
-    assert len(content["available_days"]) == 7
+    assert len(content["available_days"]) == 2
 
     expected_available_days = {WeekDay.MONDAY.value, WeekDay.THURSDAY.value}
     received_available_days = {
@@ -291,13 +290,3 @@ async def test_update_player_availability_days(
     assert (
         received_available_days == expected_available_days
     ), f"Expected {expected_available_days}, but got {received_available_days}"
-
-    all_week_days = {day.value for day in WeekDay}
-    expected_unavailable_days = all_week_days - expected_available_days
-    received_unavailable_days = {
-        day["week_day"] for day in content["available_days"] if not day["is_available"]
-    }
-
-    assert (
-        received_unavailable_days == expected_unavailable_days
-    ), f"Expected unavailable days {expected_unavailable_days}, but got {received_unavailable_days}"

@@ -2,6 +2,8 @@ from uuid import UUID
 
 from app.models.player_availability import (
     PlayerAvailabilityList,
+    PlayerAvailabilityListPublic,
+    PlayerAvailabilityUpdate,
 )
 from app.repository.players_availability_repository import PlayersAvailabilityRepository
 from app.utilities.dependencies import SessionDep
@@ -16,3 +18,15 @@ class PlayersAvailabilityService:
         repo = PlayersAvailabilityRepository(session)
         player_availability = await repo.create_player_availability(user_public_id)
         return player_availability
+
+    async def update_player_availability(
+        self,
+        session: SessionDep,
+        user_public_id: UUID,
+        player_availability_in: PlayerAvailabilityUpdate,
+    ) -> PlayerAvailabilityListPublic:
+        repo = PlayersAvailabilityRepository(session)
+        player_availability_updated = await repo.update_player_availability(
+            user_public_id, player_availability_in
+        )
+        return player_availability_updated
