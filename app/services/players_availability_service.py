@@ -2,7 +2,6 @@ from uuid import UUID
 
 from app.models.player_availability import (
     PlayerAvailabilityList,
-    PlayerAvailabilityListPublic,
     PlayerAvailabilityListUpdate,
 )
 from app.repository.players_availability_repository import PlayersAvailabilityRepository
@@ -24,9 +23,8 @@ class PlayersAvailabilityService:
         session: SessionDep,
         user_public_id: UUID,
         player_availability_in: PlayerAvailabilityListUpdate,
-    ) -> PlayerAvailabilityListPublic:
+    ) -> PlayerAvailabilityList:
         repo = PlayersAvailabilityRepository(session)
-        player_availability_updated = await repo.update_player_availability(
+        return await repo.update_player_availability(
             user_public_id, player_availability_in
         )
-        return player_availability_updated

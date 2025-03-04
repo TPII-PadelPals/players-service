@@ -67,6 +67,4 @@ class PlayersAvailabilityRepository:
                 is_available=player_availability.is_available,
             )
             player_availabilities_list_updated.append(availability_base)
-        return PlayerAvailabilityListPublic(
-            user_public_id=user_public_id, available_days=player_availabilities_updated
-        )
+        return PlayerAvailabilityList(available_days=player_availabilities_updated)
