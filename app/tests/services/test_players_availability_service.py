@@ -12,8 +12,7 @@ async def test_create_player_availability_days_are_all_unavailable(
 ) -> None:
     user_public_id = uuid.uuid4()
     expected_player_availabilities = [
-        {"user_public_id": user_public_id, "week_day": i, "is_available": False}
-        for i in range(1, 8)
+        {"week_day": i, "is_available": False} for i in range(1, 8)
     ]
     player_availability_service = PlayersAvailabilityService()
 
@@ -30,7 +29,6 @@ async def test_create_player_availability_days_are_all_unavailable(
 
     actual_availabilities = [
         {
-            "user_public_id": day.user_public_id,
             "week_day": day.week_day,
             "is_available": day.is_available,
         }
