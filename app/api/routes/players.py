@@ -93,7 +93,8 @@ async def update_player_availability(
     """
     Update player availability.
     """
-    player_availability_service = PlayersAvailabilityService()
-    return await player_availability_service.update_player_availability(
-        session, user_public_id, player_availability_in
-    ).to_public(user_public_id=user_public_id)
+    return (
+        await PlayersAvailabilityService()
+        .update_player_availability(session, user_public_id, player_availability_in)
+        .to_public(user_public_id=user_public_id)
+    )
