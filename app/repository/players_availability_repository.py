@@ -7,7 +7,6 @@ from app.models.player_availability import (
     PlayerAvailability,
     PlayerAvailabilityBase,
     PlayerAvailabilityList,
-    PlayerAvailabilityListPublic,
     PlayerAvailabilityListUpdate,
 )
 from app.utilities.exceptions import NotFoundException
@@ -38,7 +37,7 @@ class PlayersAvailabilityRepository:
         self,
         user_public_id: UUID,
         player_availabilities_in: PlayerAvailabilityListUpdate,
-    ) -> PlayerAvailabilityListPublic:
+    ) -> PlayerAvailabilityList:
         player_availabilities_updated = []
 
         query = select(PlayerAvailability).where(

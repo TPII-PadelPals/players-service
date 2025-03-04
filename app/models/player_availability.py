@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from enum import IntEnum
 from typing import ClassVar
 from uuid import UUID
@@ -52,7 +54,7 @@ class PlayerAvailability(
 class PlayerAvailabilityList(SQLModel):
     available_days: list[PlayerAvailabilityBase]
 
-    def to_public(self, user_public_id):
+    def to_public(self, user_public_id: UUID) -> PlayerAvailabilityListPublic:
         return PlayerAvailabilityListPublic(
             user_public_id=user_public_id, available_days=self.available_days
         )

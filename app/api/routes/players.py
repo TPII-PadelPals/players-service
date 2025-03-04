@@ -3,24 +3,23 @@ from typing import Any
 
 from fastapi import APIRouter, status
 
+from app.api.routes import players_availability
 from app.models.player import PlayerCreate, PlayerPublic, PlayerUpdate
-from app.models.player_availability import (
-    PlayerAvailabilityListPublic,
-    PlayerAvailabilityListUpdate,
-)
 from app.services.players_availability_service import PlayersAvailabilityService
 from app.services.players_creation_service import PlayerCreationService
 from app.services.players_service import PlayersService
 from app.services.strokes_service import StrokesService
 from app.utilities.dependencies import SessionDep
 from app.utilities.messages import (
-    PLAYERS_AVAILABILITY_PATCH_RESPONSES,
     PLAYERS_GET_RESPONSES,
     PLAYERS_PATCH_RESPONSES,
     PLAYERS_POST_RESPONSES,
 )
 
 router = APIRouter()
+router.include_router(
+    players_availability.router, prefix="/{user_public_id}/availability"
+)
 
 service = PlayersService()
 
@@ -73,28 +72,3 @@ async def read_player(session: SessionDep, user_public_id: uuid.UUID) -> Any:
     Get Player by Public ID.
     """
     return await service.read_player(session, user_public_id)
-
-
-# ***** Player Availability Endpoints *****
-
-
-@router.patch(
-    "/{user_public_id}/availability",
-    response_model=PlayerAvailabilityListPublic,
-    status_code=status.HTTP_200_OK,
-    responses={**PLAYERS_AVAILABILITY_PATCH_RESPONSES},  # type: ignore[dict-item]
-)
-async def update_player_availability(
-    *,
-    session: SessionDep,
-    user_public_id: uuid.UUID,
-    player_availability_in: PlayerAvailabilityListUpdate,
-) -> Any:
-    """
-    Update player availability.
-    """
-    return (
-        await PlayersAvailabilityService()
-        .update_player_availability(session, user_public_id, player_availability_in)
-        .to_public(user_public_id=user_public_id)
-    )
