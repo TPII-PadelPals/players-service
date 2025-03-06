@@ -57,7 +57,6 @@ async def test_create_and_get_strokes(session: AsyncSession) -> None:
 
 async def test_generate_strokes_whit_player(session: AsyncSession) -> None:
     user_public_id = uuid.uuid4()
-    telegram_id = 10103030
 
     strokes_service = StrokesService()
     players_creation_service = PlayerCreationService(
@@ -65,9 +64,7 @@ async def test_generate_strokes_whit_player(session: AsyncSession) -> None:
         strokes_service=StrokesService(),
         player_availability_service=PlayersAvailabilityService(),
     )
-    player_create = PlayerCreate(
-        user_public_id=str(user_public_id), telegram_id=telegram_id
-    )
+    player_create = PlayerCreate(user_public_id=str(user_public_id))
     # test
     _player = await players_creation_service.create_player(session, player_create)
     strokes = await strokes_service.get_strokes(session, user_public_id)

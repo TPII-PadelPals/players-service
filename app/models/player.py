@@ -22,7 +22,6 @@ class PlayerBase(SQLModel):
 # Shared private properties
 class PlayerImmutable(SQLModel):
     user_public_id: UUID = Field()
-    telegram_id: int | None = Field(default=None)
 
 
 # Properties to receive on player creation

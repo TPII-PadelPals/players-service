@@ -20,10 +20,7 @@ def get_x_api_key_header() -> dict[str, str]:
 
 async def create_player(session: AsyncSession, user_public_id: uuid.UUID) -> Player:
     user_public_id_str = str(user_public_id)
-    telegram_id = 10103030
     repo = PlayersRepository(session)
-    player_create = PlayerCreate(
-        user_public_id=user_public_id_str, telegram_id=telegram_id
-    )
+    player_create = PlayerCreate(user_public_id=user_public_id_str)
     player = await repo.create_player(player_create)
     return player
