@@ -3,7 +3,13 @@ from uuid import UUID
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.models.player import Player, PlayerCreate, PlayerUpdate
+from app.models.player import (
+    Player,
+    PlayerCreate,
+    PlayerFilters,
+    PlayerList,
+    PlayerUpdate,
+)
 from app.utilities.exceptions import NotFoundException
 from app.utilities.repository.players_utils import PlayersUtils
 
@@ -38,3 +44,9 @@ class PlayersRepository:
         if not player:
             raise NotFoundException(item="Player")
         return player
+
+    async def filter_players(self, player_filters: PlayerFilters) -> PlayerList:
+        filters = player_filters.to_sqlalchemy()
+        query = select(Player).where(filters)
+        result = await self.session.exec(query)  # type: ignore
+        return PlayerList(data=list(result.all()))

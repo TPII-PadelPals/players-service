@@ -257,7 +257,7 @@ async def test_filter_players_by_coordinates_and_search_range_km(
     expected_user_public_ids = []
     for i in range(1, 3 + 1):
         user_public_id = uuid.uuid4()
-        expected_user_public_ids.append(user_public_id)
+        expected_user_public_ids.append(str(user_public_id))
         player_data = {
             "user_public_id": user_public_id,
             "telegram_id": 1000 * i,
@@ -268,13 +268,16 @@ async def test_filter_players_by_coordinates_and_search_range_km(
         await PlayerCreationExtendedService().create_player_extended(
             session, player_data
         )
+    unexpected_user_public_ids = []
     for i in range(4, 6 + 1):
+        user_public_id = uuid.uuid4()
+        unexpected_user_public_ids.append(str(user_public_id))
         player_data = {
-            "user_public_id": uuid.uuid4(),
+            "user_public_id": user_public_id,
             "telegram_id": 1000 * i,
             "search_range_km": i,
-            "latitude": sqrt((coordinates[0] + i) / 2) + 1,
-            "longitude": sqrt((coordinates[1] + i) / 2) + 1,
+            "latitude": coordinates[0] + i,
+            "longitude": coordinates[1] + i,
         }
         await PlayerCreationExtendedService().create_player_extended(
             session, player_data
@@ -287,6 +290,7 @@ async def test_filter_players_by_coordinates_and_search_range_km(
     )
 
     assert response.status_code == 200
-    result_players = response.json()
+    content = response.json()
+    result_players = content["data"]
     for result_player in result_players:
-        assert result_player.user_public_id in expected_user_public_ids
+        assert result_player["user_public_id"] in expected_user_public_ids
