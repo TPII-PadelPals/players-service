@@ -57,9 +57,8 @@ class PlayerAvailableDaysList(SQLModel):
 class PlayerAvailabilityList(PlayerAvailabilityImmutable, PlayerAvailableDaysList):
 
     def to_public(self) -> PlayerAvailabilityListPublic:
-        return PlayerAvailabilityListPublic(
-            user_public_id=self.user_public_id, available_days=self.available_days
-        )
+        return PlayerAvailabilityListPublic.model_validate(self)
+
 
 class PlayerAvailabilityListUpdate(PlayerAvailableDaysList):
     pass
