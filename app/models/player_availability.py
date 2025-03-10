@@ -54,8 +54,8 @@ class PlayerAvailability(
 class PlayerAvailableDaysList(SQLModel):
     available_days: list[PlayerAvailabilityBase]
 
-class PlayerAvailabilityList(PlayerAvailabilityImmutable, PlayerAvailableDaysList):
 
+class PlayerAvailabilityList(PlayerAvailabilityImmutable, PlayerAvailableDaysList):
     def to_public(self) -> PlayerAvailabilityListPublic:
         return PlayerAvailabilityListPublic.model_validate(self)
 
@@ -66,4 +66,3 @@ class PlayerAvailabilityListUpdate(PlayerAvailableDaysList):
 
 class PlayerAvailabilityListPublic(PlayerAvailabilityList):
     pass
-
