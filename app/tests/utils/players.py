@@ -1,11 +1,38 @@
+from typing import Any
+
+from app.models.player import Player, PlayerCreate, PlayerUpdate
+from app.services.players_availability_service import PlayersAvailabilityService
+from app.services.players_creation_service import PlayerCreationService
+from app.services.players_service import PlayersService
+from app.services.strokes_service import StrokesService
+from app.utilities.dependencies import SessionDep
 from app.utilities.exceptions import NotUniqueException
 
 
 async def mock_create_player_availability_raise_not_unique_exception(
-    _self, _session, _user_public_id
-):
+    _self: Any, _session: Any, _user_public_id: Any
+) -> None:
     mock_raise_not_unique_exception("player availability")
 
 
-def mock_raise_not_unique_exception(class_name):
+def mock_raise_not_unique_exception(class_name: Any) -> None:
     raise NotUniqueException(class_name)
+
+
+class PlayerCreationExtendedService(PlayerCreationService):
+    def __init__(
+        self,
+        players_service: PlayersService = PlayersService(),
+        strokes_service: StrokesService = StrokesService(),
+        player_availability_service: PlayersAvailabilityService = PlayersAvailabilityService(),
+    ):
+        super().__init__(players_service, strokes_service, player_availability_service)
+
+    async def create_player_extended(
+        self, session: SessionDep, player_data: dict[str, Any]
+    ) -> Player:
+        player = await self.create_player(session, PlayerCreate(**player_data))
+        player = await self.players_service.update_player(
+            session, player.user_public_id, PlayerUpdate(**player_data)
+        )
+        return player
