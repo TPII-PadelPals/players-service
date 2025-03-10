@@ -34,4 +34,4 @@ async def update_player_availability(
             session, user_public_id, player_availability_in
         )
     )
-    return player_availability_updated.to_public(user_public_id=user_public_id)
+    return player_availability_updated.to_public()

@@ -51,18 +51,19 @@ class PlayerAvailability(
     )
 
 
-class PlayerAvailabilityList(SQLModel):
+class PlayerAvailabilityList(PlayerAvailabilityImmutable):
     available_days: list[PlayerAvailabilityBase]
 
-    def to_public(self, user_public_id: UUID) -> PlayerAvailabilityListPublic:
+    def to_public(self) -> PlayerAvailabilityListPublic:
         return PlayerAvailabilityListPublic(
-            user_public_id=user_public_id, available_days=self.available_days
+            user_public_id=self.user_public_id, available_days=self.available_days
         )
 
 
-class PlayerAvailabilityListUpdate(PlayerAvailabilityList):
+class PlayerAvailabilityListUpdate(SQLModel):
+    available_days: list[PlayerAvailabilityBase]
     pass
 
 
-class PlayerAvailabilityListPublic(PlayerAvailabilityList, PlayerAvailabilityImmutable):
+class PlayerAvailabilityListPublic(PlayerAvailabilityList):
     pass

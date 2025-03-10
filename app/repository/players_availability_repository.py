@@ -5,7 +5,6 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.player_availability import (
     PlayerAvailability,
-    PlayerAvailabilityBase,
     PlayerAvailabilityList,
     PlayerAvailabilityListUpdate,
 )
@@ -31,7 +30,9 @@ class PlayersAvailabilityRepository:
             constraint_name="uq_player_availability_constraint",
             class_name="player availability",
         )
-        return PlayerAvailabilityList(available_days=player_availabilities)
+        return PlayerAvailabilityList(
+            user_public_id=user_public_id, available_days=player_availabilities
+        )
 
     async def update_player_availability(
         self,
@@ -58,12 +59,9 @@ class PlayersAvailabilityRepository:
                     player_availabilities_updated.append(player_availability)
         await self.session.commit()
 
-        player_availabilities_list_updated = []
         for player_availability in player_availabilities_updated:
             await self.session.refresh(player_availability)
-            availability_base = PlayerAvailabilityBase(
-                week_day=player_availability.week_day,
-                is_available=player_availability.is_available,
-            )
-            player_availabilities_list_updated.append(availability_base)
-        return PlayerAvailabilityList(available_days=player_availabilities_updated)
+
+        return PlayerAvailabilityList(
+            user_public_id=user_public_id, available_days=player_availabilities_updated
+        )
