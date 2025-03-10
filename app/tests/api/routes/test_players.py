@@ -6,6 +6,7 @@ from httpx import AsyncClient
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.config import settings
+from app.models.player import PlayerBase
 from app.services.google_service import GoogleService
 from app.services.players_availability_service import PlayersAvailabilityService
 from app.tests.utils.players import (
@@ -249,10 +250,6 @@ async def test_update_player_with_time_availability_less_than_1_responds_422(
 async def test_filter_players_by_coordinates_and_search_range_km(
     async_client: AsyncClient, x_api_key_header: dict[str, str], session: AsyncSession
 ) -> None:
-    """
-    Create 3 players whose ranges matches the coordinates
-    Create 3 players whose ranges don't match the coordinates
-    """
     coordinates = (0, 0)
     expected_user_public_ids = []
     for i in range(1, 3 + 1):
@@ -268,12 +265,9 @@ async def test_filter_players_by_coordinates_and_search_range_km(
         await PlayerCreationExtendedService().create_player_extended(
             session, player_data
         )
-    unexpected_user_public_ids = []
     for i in range(4, 6 + 1):
-        user_public_id = uuid.uuid4()
-        unexpected_user_public_ids.append(str(user_public_id))
         player_data = {
-            "user_public_id": user_public_id,
+            "user_public_id": uuid.uuid4(),
             "telegram_id": 1000 * i,
             "search_range_km": i,
             "latitude": coordinates[0] + i,
@@ -292,5 +286,52 @@ async def test_filter_players_by_coordinates_and_search_range_km(
     assert response.status_code == 200
     content = response.json()
     result_players = content["data"]
+    for result_player in result_players:
+        assert result_player["user_public_id"] in expected_user_public_ids
+
+
+async def test_filter_players_by_time_availability(
+    async_client: AsyncClient, x_api_key_header: dict[str, str], session: AsyncSession
+) -> None:
+    user_public_ids = {}
+    for i in range(1, 7 + 1):
+        user_public_id = uuid.uuid4()
+        user_public_ids[i] = str(user_public_id)
+        player_data = {
+            "user_public_id": user_public_id,
+            "telegram_id": 1000 * i,
+            "time_availability": i,
+        }
+        await PlayerCreationExtendedService().create_player_extended(
+            session, player_data
+        )
+
+    morning_avail = 1
+    response = await async_client.get(
+        f"{settings.API_V1_STR}/players/",
+        headers=x_api_key_header,
+        params={"time_availability": morning_avail},
+    )
+    assert response.status_code == 200
+    content = response.json()
+    result_players = content["data"]
+    expected_user_public_ids = {
+        user_public_ids[i] for i in PlayerBase.TIME_AVAILABILITY_SETS[morning_avail]
+    }
+    for result_player in result_players:
+        assert result_player["user_public_id"] in expected_user_public_ids
+
+    afternoon_avail = 2
+    response = await async_client.get(
+        f"{settings.API_V1_STR}/players/",
+        headers=x_api_key_header,
+        params={"time_availability": afternoon_avail},
+    )
+    assert response.status_code == 200
+    content = response.json()
+    result_players = content["data"]
+    expected_user_public_ids = {
+        user_public_ids[i] for i in PlayerBase.TIME_AVAILABILITY_SETS[afternoon_avail]
+    }
     for result_player in result_players:
         assert result_player["user_public_id"] in expected_user_public_ids

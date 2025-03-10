@@ -10,6 +10,15 @@ from sqlmodel import Field, Index, SQLModel
 class PlayerBase(SQLModel):
     MIN_TIME_AVAILABILITY: ClassVar[int] = 1
     MAX_TIME_AVAILABILITY: ClassVar[int] = 7
+    TIME_AVAILABILITY_SETS: ClassVar[dict[int, set[int]]] = {
+        1: set({1, 4, 5, 7}),
+        2: set({2, 4, 6, 7}),
+        3: set({3, 5, 6, 7}),
+        4: set({1, 2, 4, 5, 6, 7}),
+        5: set({1, 3, 4, 5, 6, 7}),
+        6: set({2, 3, 4, 5, 6, 7}),
+        7: set({1, 2, 3, 4, 5, 6, 7}),
+    }
 
     search_range_km: int | None = Field(default=None)
     address: str | None = Field(default=None)
@@ -53,7 +62,7 @@ class Player(PlayerBase, PlayerImmutable, table=True):
 
 
 class PlayerFilters(PlayerBase):
-    def _coords_conditions(self, data: dict[str, Any]) -> list[Any]:
+    def _get_coords_conditions(self, data: dict[str, Any]) -> list[Any]:
         latitude = data.pop("latitude", None)
         longitude = data.pop("longitude", None)
         if latitude is None or longitude is None:
@@ -70,18 +79,30 @@ class PlayerFilters(PlayerBase):
         ]
         return coords_conditions
 
-    def _equal_conditions(self, data: dict[str, Any]) -> list[Any]:
-        equal_conditions = []
-        for attr, value in data.items():
-            if value is not None:
-                equal_conditions.append(getattr(Player, attr) == value)
-        return equal_conditions
+    def _get_time_conditions(self, data: dict[str, Any]) -> list[Any]:
+        time = data.pop("time_availability", None)
+        if time is None:
+            return []
+        time_conditions = [
+            Player.time_availability.isnot(None),  # type: ignore
+            Player.time_availability.in_(  # type: ignore
+                self.TIME_AVAILABILITY_SETS[time]
+            ),
+        ]
+        return time_conditions
+
+        # def _equal_conditions(self, data: dict[str, Any]) -> list[Any]:
+        #     equal_conditions = []
+        #     for attr, value in data.items():
+        #         if value is not None:
+        #             equal_conditions.append(getattr(Player, attr) == value)
+        #     return equal_conditions
 
     def to_sqlalchemy(self) -> Any:
         data = self.model_dump(exclude_unset=True)
-        coords_conditions = self._coords_conditions(data)
-        equal_conditions = self._equal_conditions(data)
-        all_conditions = coords_conditions + equal_conditions
+        coords_conditions = self._get_coords_conditions(data)
+        time_conditions = self._get_time_conditions(data)
+        all_conditions = coords_conditions + time_conditions
         return and_(*all_conditions)
 
 
