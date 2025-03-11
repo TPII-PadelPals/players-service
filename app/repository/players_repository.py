@@ -48,5 +48,5 @@ class PlayersRepository:
     async def filter_players(self, player_filters: PlayerFilters) -> PlayerList:
         filters = player_filters.to_sqlalchemy()
         query = select(Player).where(filters)
-        result = await self.session.exec(query)  # type: ignore
+        result = await self.session.exec(query)
         return PlayerList(data=list(result.all()))
