@@ -3,6 +3,7 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, status
 
+from app.api.routes import players_availability
 from app.models.player import (
     PlayerCreate,
     PlayerFilters,
@@ -22,6 +23,9 @@ from app.utilities.messages import (
 )
 
 router = APIRouter()
+router.include_router(
+    players_availability.router, prefix="/{user_public_id}/availability"
+)
 
 service = PlayersService()
 

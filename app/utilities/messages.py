@@ -11,7 +11,8 @@ NOT_ENOUGH_PERMISSIONS = {
 ITEM_NOT_FOUND = {status.HTTP_404_NOT_FOUND: {"description": "Item not found."}}
 ITEM_RESPONSES = {**ITEM_NOT_FOUND, **NOT_ENOUGH_PERMISSIONS}
 
-# Player responses
+# *** Player responses ***
+
 PLAYER_ALREADY_EXISTS = {
     status.HTTP_409_CONFLICT: {"description": "Player already exists."}
 }
@@ -56,6 +57,7 @@ PLAYERS_PATCH_RESPONSES = {
 
 PLAYERS_GET_RESPONSES = {**PLAYER_NOT_FOUND}
 
+# *** Strokes responses ***
 
 STROKES_NOT_FOUND = {
     status.HTTP_404_NOT_FOUND: {"description": "Padel strokes not found."}
@@ -67,3 +69,14 @@ STROKES_PUT_RESPONSES = {
 }
 
 STROKES_GET_RESPONSES = {**STROKES_NOT_FOUND}
+
+# *** Player Availability responses ***
+
+PLAYER_AVAILABILITY_NOT_FOUND = {
+    status.HTTP_404_NOT_FOUND: {"description": "Player availability not found."}
+}
+
+PLAYERS_AVAILABILITY_PATCH_RESPONSES = {
+    status.HTTP_200_OK: {"description": "Player availability updated."},
+    **PLAYER_AVAILABILITY_NOT_FOUND,
+}
