@@ -5,6 +5,8 @@ from sqlalchemy import UniqueConstraint, func
 from sqlalchemy.sql.expression import and_
 from sqlmodel import Field, Index, SQLModel
 
+from app.models.player_availability import PlayerAvailability, WeekDay
+
 
 # Shared properties
 class PlayerBase(SQLModel):
@@ -62,6 +64,8 @@ class Player(PlayerBase, PlayerImmutable, table=True):
 
 
 class PlayerFilters(PlayerBase):
+    available_days: list[int] | None = Field(default=None)
+
     def _get_coords_conditions(self, data: dict[str, Any]) -> list[Any]:
         latitude = data.pop("latitude", None)
         longitude = data.pop("longitude", None)
@@ -91,18 +95,25 @@ class PlayerFilters(PlayerBase):
         ]
         return time_conditions
 
-        # def _equal_conditions(self, data: dict[str, Any]) -> list[Any]:
-        #     equal_conditions = []
-        #     for attr, value in data.items():
-        #         if value is not None:
-        #             equal_conditions.append(getattr(Player, attr) == value)
-        #     return equal_conditions
+    def _get_available_days_conditions(self, data: dict[str, Any]) -> list[Any]:
+        avail_days = data.pop("available_days", None)
+        if avail_days is None or len(avail_days) == 0:
+            return []
+        avail_days_conditions = [
+            Player.user_public_id == PlayerAvailability.user_public_id
+        ]
+        for avail_day in avail_days:
+            avail_days_conditions.append(
+                PlayerAvailability.week_day == WeekDay(avail_day)
+            )
+        return avail_days_conditions
 
     def to_sqlalchemy(self) -> Any:
         data = self.model_dump(exclude_unset=True)
-        coords_conditions = self._get_coords_conditions(data)
-        time_conditions = self._get_time_conditions(data)
-        all_conditions = coords_conditions + time_conditions
+        all_conditions = []
+        all_conditions += self._get_available_days_conditions(data)
+        all_conditions += self._get_time_conditions(data)
+        all_conditions += self._get_coords_conditions(data)
         return and_(*all_conditions)
 
 

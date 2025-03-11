@@ -335,3 +335,48 @@ async def test_filter_players_by_time_availability(
     }
     for result_player in result_players:
         assert result_player["user_public_id"] in expected_user_public_ids
+
+
+async def test_filter_players_by_available_days(
+    async_client: AsyncClient, x_api_key_header: dict[str, str], session: AsyncSession
+) -> None:
+    user_public_ids = {}
+    for i in range(1, 7 + 1):
+        user_public_id = uuid.uuid4()
+        user_public_ids[i] = str(user_public_id)
+        player_data = {
+            "user_public_id": user_public_id,
+            "telegram_id": 1000 * i,
+            "available_days": [i],
+        }
+        await PlayerCreationExtendedService().create_player_extended(
+            session, player_data
+        )
+
+    monday = 1
+    tuesday = 2
+    response = await async_client.get(
+        f"{settings.API_V1_STR}/players/",
+        headers=x_api_key_header,
+        params={"available_days": [monday, tuesday]},
+    )
+    assert response.status_code == 200
+    content = response.json()
+    result_players = content["data"]
+    expected_user_public_ids = {user_public_ids[i] for i in [monday, tuesday]}
+    for result_player in result_players:
+        assert result_player["user_public_id"] in expected_user_public_ids
+
+    wednesday = 3
+    thursday = 4
+    response = await async_client.get(
+        f"{settings.API_V1_STR}/players/",
+        headers=x_api_key_header,
+        params={"available_days": [wednesday, thursday]},
+    )
+    assert response.status_code == 200
+    content = response.json()
+    result_players = content["data"]
+    expected_user_public_ids = {user_public_ids[i] for i in [wednesday, thursday]}
+    for result_player in result_players:
+        assert result_player["user_public_id"] in expected_user_public_ids

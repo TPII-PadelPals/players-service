@@ -3,6 +3,10 @@ from typing import Any
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.player import Player, PlayerCreate, PlayerUpdate
+from app.models.player_availability import (
+    PlayerAvailabilityBase,
+    PlayerAvailabilityListUpdate,
+)
 from app.services.players_availability_service import PlayersAvailabilityService
 from app.services.players_creation_service import PlayerCreationService
 from app.services.players_service import PlayersService
@@ -33,8 +37,19 @@ class PlayerCreationExtendedService(PlayerCreationService):
     async def create_player_extended(
         self, session: SessionDep, player_data: dict[str, Any]
     ) -> Player:
+        user_public_id = player_data["user_public_id"]
         player = await self.create_player(session, PlayerCreate(**player_data))
         player = await self.players_service.update_player(
-            session, player.user_public_id, PlayerUpdate(**player_data)
+            session, user_public_id, PlayerUpdate(**player_data)
         )
+        if "available_days" in player_data:
+            available_days = PlayerAvailabilityListUpdate(
+                available_days=[
+                    PlayerAvailabilityBase(week_day=day, is_available=True)
+                    for day in player_data["available_days"]
+                ]
+            )
+            await self.player_availability_service.update_player_availability(
+                session, user_public_id, available_days
+            )
         return player

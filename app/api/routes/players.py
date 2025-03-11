@@ -1,7 +1,7 @@
 import uuid
-from typing import Any
+from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Query, status
 
 from app.api.routes import players_availability
 from app.models.player import (
@@ -87,10 +87,10 @@ async def read_player(session: SessionDep, user_public_id: uuid.UUID) -> Any:
     responses={**PLAYERS_GET_RESPONSES},  # type: ignore[dict-item]
 )
 async def filter_players(
-    session: SessionDep, player_filters: PlayerFilters = Depends()
+    session: SessionDep, player_filters: Annotated[PlayerFilters, Query()]
 ) -> Any:
     """
-    Get Player by Public ID.
+    Get Player/s by filter options.
     """
     player_list = await service.filter_players(session, player_filters)
     return player_list.to_public()
