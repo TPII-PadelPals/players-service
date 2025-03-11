@@ -64,7 +64,7 @@ class Player(PlayerBase, PlayerImmutable, table=True):
 
 
 class PlayerFilters(PlayerBase):
-    available_days: list[int] | None = Field(default=None)
+    available_days: list[WeekDay] | None = Field(default=None)
 
     def _get_coords_conditions(self, data: dict[str, Any]) -> list[Any]:
         latitude = data.pop("latitude", None)
@@ -103,9 +103,7 @@ class PlayerFilters(PlayerBase):
             Player.user_public_id == PlayerAvailability.user_public_id
         ]
         for avail_day in avail_days:
-            avail_days_conditions.append(
-                PlayerAvailability.week_day == WeekDay(avail_day)
-            )
+            avail_days_conditions.append(PlayerAvailability.week_day == avail_day)
         return avail_days_conditions
 
     def to_sqlalchemy(self) -> Any:
