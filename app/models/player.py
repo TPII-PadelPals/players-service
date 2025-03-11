@@ -49,3 +49,18 @@ class Player(PlayerBase, PlayerImmutable, table=True):
         Index("id", "user_public_id"),
         UniqueConstraint("user_public_id", name="uq_player_constraint"),
     )
+
+
+class PlayerFilters(SQLModel):
+    pass
+
+
+class PlayerListPublic(SQLModel):
+    data: list[PlayerPublic]
+
+
+class PlayerList(SQLModel):
+    data: list[Player]
+
+    def to_public(self) -> PlayerListPublic:
+        return PlayerListPublic.model_validate(self)

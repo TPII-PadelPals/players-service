@@ -3,7 +3,13 @@ from uuid import UUID
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.models.player import Player, PlayerCreate, PlayerUpdate
+from app.models.player import (
+    Player,
+    PlayerCreate,
+    PlayerFilters,
+    PlayerList,
+    PlayerUpdate,
+)
 from app.utilities.exceptions import NotFoundException
 from app.utilities.repository.players_utils import PlayersUtils
 
@@ -38,3 +44,8 @@ class PlayersRepository:
         if not player:
             raise NotFoundException(item="Player")
         return player
+
+    async def filter_players(self, _player_filters: PlayerFilters) -> PlayerList:
+        query = select(Player)
+        result = await self.session.exec(query)
+        return PlayerList(data=list(result.all()))
