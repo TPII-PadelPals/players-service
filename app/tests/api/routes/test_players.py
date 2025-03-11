@@ -247,45 +247,47 @@ async def test_update_player_with_time_availability_less_than_1_responds_422(
     assert content["detail"][0]["msg"] == "Input should be greater than or equal to 1"
 
 
-async def test_filter_players_by_coordinates_and_search_range_km(
+async def test_filter_players_by_available_days(
     async_client: AsyncClient, x_api_key_header: dict[str, str], session: AsyncSession
 ) -> None:
-    coordinates = (0, 0)
-    expected_user_public_ids = []
-    for i in range(1, 3 + 1):
+    user_public_ids = {}
+    for i in range(1, 7 + 1):
         user_public_id = uuid.uuid4()
-        expected_user_public_ids.append(str(user_public_id))
+        user_public_ids[i] = str(user_public_id)
         player_data = {
             "user_public_id": user_public_id,
             "telegram_id": 1000 * i,
-            "search_range_km": i,
-            "latitude": sqrt((coordinates[0] + i) / 2),
-            "longitude": sqrt((coordinates[1] + i) / 2),
-        }
-        await PlayerCreationExtendedService().create_player_extended(
-            session, player_data
-        )
-    for i in range(4, 6 + 1):
-        player_data = {
-            "user_public_id": uuid.uuid4(),
-            "telegram_id": 1000 * i,
-            "search_range_km": i,
-            "latitude": coordinates[0] + i,
-            "longitude": coordinates[1] + i,
+            "available_days": [i],
         }
         await PlayerCreationExtendedService().create_player_extended(
             session, player_data
         )
 
+    monday = 1
+    tuesday = 2
     response = await async_client.get(
         f"{settings.API_V1_STR}/players/",
         headers=x_api_key_header,
-        params={"latitude": coordinates[0], "longitude": coordinates[1]},
+        params={"available_days": [monday, tuesday]},
     )
-
     assert response.status_code == 200
     content = response.json()
     result_players = content["data"]
+    expected_user_public_ids = {user_public_ids[i] for i in [monday, tuesday]}
+    for result_player in result_players:
+        assert result_player["user_public_id"] in expected_user_public_ids
+
+    wednesday = 3
+    thursday = 4
+    response = await async_client.get(
+        f"{settings.API_V1_STR}/players/",
+        headers=x_api_key_header,
+        params={"available_days": [wednesday, thursday]},
+    )
+    assert response.status_code == 200
+    content = response.json()
+    result_players = content["data"]
+    expected_user_public_ids = {user_public_ids[i] for i in [wednesday, thursday]}
     for result_player in result_players:
         assert result_player["user_public_id"] in expected_user_public_ids
 
@@ -337,46 +339,44 @@ async def test_filter_players_by_time_availability(
         assert result_player["user_public_id"] in expected_user_public_ids
 
 
-async def test_filter_players_by_available_days(
+async def test_filter_players_by_coordinates_and_search_range_km(
     async_client: AsyncClient, x_api_key_header: dict[str, str], session: AsyncSession
 ) -> None:
-    user_public_ids = {}
-    for i in range(1, 7 + 1):
+    coordinates = (0, 0)
+    expected_user_public_ids = []
+    for i in range(1, 3 + 1):
         user_public_id = uuid.uuid4()
-        user_public_ids[i] = str(user_public_id)
+        expected_user_public_ids.append(str(user_public_id))
         player_data = {
             "user_public_id": user_public_id,
             "telegram_id": 1000 * i,
-            "available_days": [i],
+            "search_range_km": i,
+            "latitude": sqrt((coordinates[0] + i) / 2),
+            "longitude": sqrt((coordinates[1] + i) / 2),
+        }
+        await PlayerCreationExtendedService().create_player_extended(
+            session, player_data
+        )
+    for i in range(4, 6 + 1):
+        player_data = {
+            "user_public_id": uuid.uuid4(),
+            "telegram_id": 1000 * i,
+            "search_range_km": i,
+            "latitude": coordinates[0] + i,
+            "longitude": coordinates[1] + i,
         }
         await PlayerCreationExtendedService().create_player_extended(
             session, player_data
         )
 
-    monday = 1
-    tuesday = 2
     response = await async_client.get(
         f"{settings.API_V1_STR}/players/",
         headers=x_api_key_header,
-        params={"available_days": [monday, tuesday]},
+        params={"latitude": coordinates[0], "longitude": coordinates[1]},
     )
-    assert response.status_code == 200
-    content = response.json()
-    result_players = content["data"]
-    expected_user_public_ids = {user_public_ids[i] for i in [monday, tuesday]}
-    for result_player in result_players:
-        assert result_player["user_public_id"] in expected_user_public_ids
 
-    wednesday = 3
-    thursday = 4
-    response = await async_client.get(
-        f"{settings.API_V1_STR}/players/",
-        headers=x_api_key_header,
-        params={"available_days": [wednesday, thursday]},
-    )
     assert response.status_code == 200
     content = response.json()
     result_players = content["data"]
-    expected_user_public_ids = {user_public_ids[i] for i in [wednesday, thursday]}
     for result_player in result_players:
         assert result_player["user_public_id"] in expected_user_public_ids

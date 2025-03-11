@@ -66,6 +66,29 @@ class Player(PlayerBase, PlayerImmutable, table=True):
 class PlayerFilters(PlayerBase):
     available_days: list[WeekDay] | None = Field(default=None)
 
+    def _get_available_days_conditions(self, data: dict[str, Any]) -> list[Any]:
+        avail_days = data.pop("available_days", None)
+        if avail_days is None or len(avail_days) == 0:
+            return []
+        avail_days_conditions = [
+            Player.user_public_id == PlayerAvailability.user_public_id
+        ]
+        for avail_day in avail_days:
+            avail_days_conditions.append(PlayerAvailability.week_day == avail_day)
+        return avail_days_conditions
+
+    def _get_time_conditions(self, data: dict[str, Any]) -> list[Any]:
+        time = data.pop("time_availability", None)
+        if time is None:
+            return []
+        time_conditions = [
+            Player.time_availability.isnot(None),  # type: ignore
+            Player.time_availability.in_(  # type: ignore
+                self.TIME_AVAILABILITY_SETS[time]
+            ),
+        ]
+        return time_conditions
+
     def _get_coords_conditions(self, data: dict[str, Any]) -> list[Any]:
         latitude = data.pop("latitude", None)
         longitude = data.pop("longitude", None)
@@ -82,29 +105,6 @@ class PlayerFilters(PlayerBase):
             < Player.search_range_km,
         ]
         return coords_conditions
-
-    def _get_time_conditions(self, data: dict[str, Any]) -> list[Any]:
-        time = data.pop("time_availability", None)
-        if time is None:
-            return []
-        time_conditions = [
-            Player.time_availability.isnot(None),  # type: ignore
-            Player.time_availability.in_(  # type: ignore
-                self.TIME_AVAILABILITY_SETS[time]
-            ),
-        ]
-        return time_conditions
-
-    def _get_available_days_conditions(self, data: dict[str, Any]) -> list[Any]:
-        avail_days = data.pop("available_days", None)
-        if avail_days is None or len(avail_days) == 0:
-            return []
-        avail_days_conditions = [
-            Player.user_public_id == PlayerAvailability.user_public_id
-        ]
-        for avail_day in avail_days:
-            avail_days_conditions.append(PlayerAvailability.week_day == avail_day)
-        return avail_days_conditions
 
     def to_sqlalchemy(self) -> Any:
         data = self.model_dump(exclude_unset=True)
