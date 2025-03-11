@@ -80,12 +80,7 @@ async def read_player(session: SessionDep, user_public_id: uuid.UUID) -> Any:
     return await service.read_player(session, user_public_id)
 
 
-@router.get(
-    "/",
-    response_model=PlayerListPublic,
-    status_code=status.HTTP_200_OK,
-    responses={**PLAYERS_GET_RESPONSES},  # type: ignore[dict-item]
-)
+@router.get("/", response_model=PlayerListPublic, status_code=status.HTTP_200_OK)
 async def filter_players(
     session: SessionDep, player_filters: Annotated[PlayerFilters, Query()]
 ) -> Any:
