@@ -106,12 +106,19 @@ class PlayerFilters(PlayerBase):
         ]
         return coords_conditions
 
+    def _get_equal_conditions(self, data: dict[str, Any]) -> list[Any]:
+        equal_conditions = []
+        for attr, value in data.items():
+            equal_conditions.append(getattr(Player, attr) == value)
+        return equal_conditions
+
     def to_sqlalchemy(self) -> Any:
         data = self.model_dump(exclude_unset=True)
         all_conditions = []
         all_conditions += self._get_available_days_conditions(data)
         all_conditions += self._get_time_conditions(data)
         all_conditions += self._get_coords_conditions(data)
+        all_conditions += self._get_equal_conditions(data)
         return and_(*all_conditions)
 
 

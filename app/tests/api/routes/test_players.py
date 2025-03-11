@@ -380,3 +380,33 @@ async def test_filter_players_by_coordinates_and_search_range_km(
     result_players = content["data"]
     for result_player in result_players:
         assert result_player["user_public_id"] in expected_user_public_ids
+
+
+async def test_filter_players_by_address(
+    async_client: AsyncClient, x_api_key_header: dict[str, str], session: AsyncSession
+) -> None:
+    address = "Av. Paseo Colon 85{}"
+    user_public_ids = []
+    for i in range(3):
+        user_public_id = uuid.uuid4()
+        user_public_ids.append(str(user_public_id))
+        player_data = {
+            "user_public_id": user_public_id,
+            "telegram_id": 1000 + i,
+            "address": address.format(i),
+        }
+        await PlayerCreationExtendedService().create_player_extended(
+            session, player_data
+        )
+
+    response = await async_client.get(
+        f"{settings.API_V1_STR}/players/",
+        headers=x_api_key_header,
+        params={"address": address.format(0)},
+    )
+
+    assert response.status_code == 200
+    content = response.json()
+    result_players = content["data"]
+    assert len(result_players) == 1
+    assert result_players[0]["user_public_id"] == user_public_ids[0]
