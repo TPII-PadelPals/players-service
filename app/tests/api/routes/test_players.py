@@ -2,11 +2,13 @@ import uuid
 from typing import Any
 
 from httpx import AsyncClient
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.config import settings
 from app.services.google_service import GoogleService
 from app.services.players_availability_service import PlayersAvailabilityService
 from app.tests.utils.players import (
+    PlayerCreationExtendedService,
     mock_create_player_availability_raise_not_unique_exception,
 )
 from app.utilities.exceptions import NotUniqueException
@@ -241,3 +243,84 @@ async def test_update_player_with_time_availability_less_than_1_responds_422(
     content = response.json()
     assert content["detail"][0]["loc"] == ["body", "time_availability"]
     assert content["detail"][0]["msg"] == "Input should be greater than or equal to 1"
+
+
+async def test_filter_similar_strokes_players(
+    async_client: AsyncClient, x_api_key_header: dict[str, str], session: AsyncSession
+) -> None:
+    user_public_ids = {}
+    beginner = 1
+    for i in range(3):
+        user_public_id = uuid.uuid4()
+        user_public_ids[(beginner, i)] = str(user_public_id)
+        player_data = {
+            "user_public_id": user_public_id,
+            "telegram_id": 1000 * beginner + i,
+            "strokes": [beginner] * 16,
+        }
+        await PlayerCreationExtendedService().create_player_extended(
+            session, player_data
+        )
+    intermediate = 2
+    for i in range(3):
+        user_public_id = uuid.uuid4()
+        user_public_ids[(intermediate, i)] = str(user_public_id)
+        player_data = {
+            "user_public_id": user_public_id,
+            "telegram_id": 1000 * intermediate + i,
+            "strokes": [intermediate] * 16,
+        }
+        await PlayerCreationExtendedService().create_player_extended(
+            session, player_data
+        )
+    advanced = 3
+    for i in range(3):
+        user_public_id = uuid.uuid4()
+        user_public_ids[(advanced, i)] = str(user_public_id)
+        player_data = {
+            "user_public_id": user_public_id,
+            "telegram_id": 1000 * advanced + i,
+            "strokes": [advanced] * 16,
+        }
+        await PlayerCreationExtendedService().create_player_extended(
+            session, player_data
+        )
+
+    response = await async_client.get(
+        f"{settings.API_V1_STR}/players/",
+        headers=x_api_key_header,
+        params={"user_public_id": user_public_ids[(beginner, 0)], "n_players": 2},
+    )
+    assert response.status_code == 200
+    content = response.json()
+    result_players = content["data"]
+    assert len(result_players) == 2
+    expected_user_public_ids = {user_public_ids[(beginner, i)] for i in range(1, 3)}
+    for result_player in result_players:
+        assert result_player["user_public_id"] in expected_user_public_ids
+
+    response = await async_client.get(
+        f"{settings.API_V1_STR}/players/",
+        headers=x_api_key_header,
+        params={"user_public_id": user_public_ids[(intermediate, 0)], "n_players": 2},
+    )
+    assert response.status_code == 200
+    content = response.json()
+    result_players = content["data"]
+    assert len(result_players) == 2
+    expected_user_public_ids = {user_public_ids[(intermediate, i)] for i in range(1, 3)}
+    for result_player in result_players:
+        assert result_player["user_public_id"] in expected_user_public_ids
+
+    response = await async_client.get(
+        f"{settings.API_V1_STR}/players/",
+        headers=x_api_key_header,
+        params={"user_public_id": user_public_ids[(advanced, 0)], "n_players": 2},
+    )
+    assert response.status_code == 200
+    content = response.json()
+    result_players = content["data"]
+    assert len(result_players) == 2
+    expected_user_public_ids = {user_public_ids[(advanced, i)] for i in range(1, 3)}
+    for result_player in result_players:
+        assert result_player["user_public_id"] in expected_user_public_ids

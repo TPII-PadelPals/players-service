@@ -9,6 +9,7 @@ from app.models.player import (
 )
 from app.repository.players_repository import PlayersRepository
 from app.services.google_service import GoogleService
+from app.services.players_similarity_service import PlayersSimilarityService
 from app.utilities.dependencies import SessionDep
 
 
@@ -38,6 +39,13 @@ class PlayersService:
     async def filter_players(
         self, session: SessionDep, player_filters: PlayerFilters
     ) -> PlayerList:
+        n_players = player_filters.n_players
+        if n_players is not None and n_players <= 0:
+            return PlayerList(data=[])
         repo = PlayersRepository(session)
         players = await repo.filter_players(player_filters)
+        sim_service = PlayersSimilarityService()
+        players = await sim_service.filter_similar_players(
+            session, players, player_filters
+        )
         return players

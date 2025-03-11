@@ -52,7 +52,8 @@ class Player(PlayerBase, PlayerImmutable, table=True):
 
 
 class PlayerFilters(SQLModel):
-    pass
+    user_public_id: UUID | None = Field(default=None)
+    n_players: int | None = Field(default=None)
 
 
 class PlayerListPublic(SQLModel):
