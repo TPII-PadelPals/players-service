@@ -1,7 +1,7 @@
 from uuid import UUID
 
 import numpy as np
-from sklearn.neighbors import BallTree
+from sklearn.neighbors import BallTree  # type: ignore
 
 from app.models.player import PlayerList
 from app.services.strokes_service import StrokesService
