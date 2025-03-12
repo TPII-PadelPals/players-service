@@ -1,51 +1,51 @@
+from uuid import UUID
+
 import numpy as np
 from sklearn.neighbors import BallTree
 
-from app.models.player import PlayerFilters, PlayerList
+from app.models.player import PlayerList
 from app.services.strokes_service import StrokesService
 from app.utilities.dependencies import SessionDep
 
 
 class PlayersSimilarityService:
+    DISTANCE_METRIC = "euclidean"
+
     async def filter_similar_players(
-        self, session: SessionDep, players: PlayerList, player_filters: PlayerFilters
+        self,
+        session: SessionDep,
+        user_public_id: UUID | None,
+        players: PlayerList,
+        n_players: int | None,
     ) -> PlayerList:
-        main_user_public_id = player_filters.user_public_id
-        if main_user_public_id is None:
+        """
+        From `players`, filter the n_players (at most) who are the
+        most similar to the one given by the user_public_id.
+        """
+        if user_public_id is None:
             return players
 
-        other_players = [
-            player
-            for player in players.data
-            if player.user_public_id != main_user_public_id
+        players.data = [
+            player for player in players.data if player.user_public_id != user_public_id
         ]
-        len_others = len(other_players)
-        if len_others == 0:
+        if len(players.data) == 0:
             return players
 
-        strokes_service = StrokesService()
-        main_strokes = (
-            (await strokes_service.get_strokes(session, main_user_public_id))
-            .to_numpy()
-            .reshape(1, -1)
-        )
-        other_strokes = []
-        for other_player in other_players:
-            other_stroke = (
-                await strokes_service.get_strokes(session, other_player.user_public_id)
-            ).to_numpy()
-            other_strokes.append(other_stroke)
-        other_strokes = np.array(other_strokes)  # type: ignore
+        user_public_ids = [user_public_id] + [
+            player.user_public_id for player in players.data
+        ]
+        strokes = [
+            await StrokesService().get_strokes(session, user_public_id)
+            for user_public_id in user_public_ids
+        ]
+        strokes_array = np.array([stroke.to_numpy() for stroke in strokes])
 
-        n_players = player_filters.n_players
-        if n_players is None:
-            n_players = len_others
-        else:
-            n_players = min(len_others, n_players)
+        max_players = len(players.data)
+        if n_players is not None:
+            max_players = min(len(players.data), n_players)
 
-        ball_tree = BallTree(other_strokes, metric="euclidean")
-        _, indices_neighbors = ball_tree.query(main_strokes, k=n_players)
+        ball_tree = BallTree(strokes_array[1:], metric=self.DISTANCE_METRIC)
+        _, idxs_neighbors = ball_tree.query(strokes_array[:1], k=max_players)
 
-        players.data = [other_players[idx] for idx in indices_neighbors.flatten()]
-
+        players.data = [players.data[idx] for idx in idxs_neighbors.flatten()]
         return players

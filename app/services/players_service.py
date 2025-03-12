@@ -42,10 +42,14 @@ class PlayersService:
         n_players = player_filters.n_players
         if n_players is not None and n_players <= 0:
             return PlayerList(data=[])
+
         repo = PlayersRepository(session)
         players = await repo.filter_players(player_filters)
+
         sim_service = PlayersSimilarityService()
         players = await sim_service.filter_similar_players(
-            session, players, player_filters
+            session, player_filters.user_public_id, players, n_players
         )
+
+        players.data = players.data[:n_players]
         return players
