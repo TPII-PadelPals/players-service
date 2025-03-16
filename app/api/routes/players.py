@@ -81,11 +81,11 @@ async def read_player(session: SessionDep, user_public_id: uuid.UUID) -> Any:
 
 
 @router.get("/", response_model=PlayerListPublic, status_code=status.HTTP_200_OK)
-async def filter_players(
+async def get_players_by_filters(
     session: SessionDep, player_filters: Annotated[PlayerFilters, Query()]
 ) -> Any:
     """
     Get Player/s by filter options.
     """
-    player_list = await service.filter_players(session, player_filters)
+    player_list = await service.get_players_by_filters(session, player_filters)
     return player_list.to_public()
