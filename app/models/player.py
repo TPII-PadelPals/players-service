@@ -13,13 +13,13 @@ class PlayerBase(SQLModel):
     MIN_TIME_AVAILABILITY: ClassVar[int] = 1
     MAX_TIME_AVAILABILITY: ClassVar[int] = 7
     TIME_AVAILABILITY_SETS: ClassVar[dict[int, set[int]]] = {
-        1: set({1, 4, 5, 7}),
-        2: set({2, 4, 6, 7}),
-        3: set({3, 5, 6, 7}),
-        4: set({1, 2, 4, 5, 6, 7}),
-        5: set({1, 3, 4, 5, 6, 7}),
-        6: set({2, 3, 4, 5, 6, 7}),
-        7: set({1, 2, 3, 4, 5, 6, 7}),
+        1: {1, 4, 5, 7},
+        2: {2, 4, 6, 7},
+        3: {3, 5, 6, 7},
+        4: {1, 2, 4, 5, 6, 7},
+        5: {1, 3, 4, 5, 6, 7},
+        6: {2, 3, 4, 5, 6, 7},
+        7: {1, 2, 3, 4, 5, 6, 7},
     }
 
     search_range_km: int | None = Field(default=None)
