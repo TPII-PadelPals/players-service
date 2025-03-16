@@ -100,10 +100,10 @@ class PlayerFilters(PlayerBase):
             Player.longitude.isnot(None),  # type: ignore
             Player.search_range_km.isnot(None),  # type: ignore
             distance_euclidean_sql(
-                Player.latitude,
-                Player.longitude,
+                Player.latitude,  # type: ignore
+                Player.longitude,  # type: ignore
                 latitude,
-                longitude,  # type: ignore
+                longitude,
             )
             < Player.search_range_km,
         ]
