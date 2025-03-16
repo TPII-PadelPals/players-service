@@ -7,6 +7,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.config import settings
 from app.models.player import PlayerBase
+from app.models.player_availability import WeekDay
 from app.services.google_service import GoogleService
 from app.services.players_availability_service import PlayersAvailabilityService
 from app.tests.utils.players import (
@@ -263,31 +264,31 @@ async def test_filter_players_by_available_days(
             session, player_data
         )
 
-    monday = 1
-    tuesday = 2
     response = await async_client.get(
         f"{settings.API_V1_STR}/players/",
         headers=x_api_key_header,
-        params={"available_days": [monday, tuesday]},
+        params={"available_days": [WeekDay.MONDAY, WeekDay.TUESDAY]},
     )
     assert response.status_code == 200
     content = response.json()
     result_players = content["data"]
-    expected_user_public_ids = {user_public_ids[i] for i in [monday, tuesday]}
+    expected_user_public_ids = {
+        user_public_ids[i] for i in [WeekDay.MONDAY, WeekDay.TUESDAY]
+    }
     for result_player in result_players:
         assert result_player["user_public_id"] in expected_user_public_ids
 
-    wednesday = 3
-    thursday = 4
     response = await async_client.get(
         f"{settings.API_V1_STR}/players/",
         headers=x_api_key_header,
-        params={"available_days": [wednesday, thursday]},
+        params={"available_days": [WeekDay.WEDNESDAY, WeekDay.THURSDAY]},
     )
     assert response.status_code == 200
     content = response.json()
     result_players = content["data"]
-    expected_user_public_ids = {user_public_ids[i] for i in [wednesday, thursday]}
+    expected_user_public_ids = {
+        user_public_ids[i] for i in [WeekDay.WEDNESDAY, WeekDay.THURSDAY]
+    }
     for result_player in result_players:
         assert result_player["user_public_id"] in expected_user_public_ids
 
