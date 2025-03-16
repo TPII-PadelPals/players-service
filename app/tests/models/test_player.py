@@ -1,7 +1,7 @@
 from app.models.player import PlayerBase
 
 
-def test_create_strokes() -> None:
+def test_time_availability_sets() -> None:
     assert all(
         time_avail in PlayerBase.TIME_AVAILABILITY_SETS[1]
         for time_avail in [1, 4, 5, 7]
