@@ -1,11 +1,12 @@
 from typing import Any, ClassVar
 from uuid import UUID
 
-from sqlalchemy import UniqueConstraint, func
+from sqlalchemy import UniqueConstraint
 from sqlalchemy.sql.expression import and_
 from sqlmodel import Field, Index, SQLModel
 
 from app.models.player_availability import PlayerAvailability, WeekDay
+from app.utilities.math_sql import distance_euclidean_sql
 
 
 # Shared properties
@@ -98,9 +99,11 @@ class PlayerFilters(PlayerBase):
             Player.latitude.isnot(None),  # type: ignore
             Player.longitude.isnot(None),  # type: ignore
             Player.search_range_km.isnot(None),  # type: ignore
-            func.sqrt(
-                func.pow(Player.latitude - latitude, 2)  # type: ignore
-                + func.pow(Player.longitude - longitude, 2)  # type: ignore
+            distance_euclidean_sql(
+                Player.latitude,
+                Player.longitude,
+                latitude,
+                longitude,  # type: ignore
             )
             < Player.search_range_km,
         ]
