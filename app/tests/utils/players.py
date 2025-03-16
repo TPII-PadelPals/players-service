@@ -26,13 +26,10 @@ def mock_raise_not_unique_exception(class_name: str) -> None:
 
 
 class PlayerCreationExtendedService(PlayerCreationService):
-    def __init__(
-        self,
-        players_service: PlayersService = PlayersService(),
-        strokes_service: StrokesService = StrokesService(),
-        player_availability_service: PlayersAvailabilityService = PlayersAvailabilityService(),
-    ):
-        super().__init__(players_service, strokes_service, player_availability_service)
+    def __init__(self) -> None:
+        super().__init__(
+            PlayersService(), StrokesService(), PlayersAvailabilityService()
+        )
 
     async def create_player_extended(
         self, session: SessionDep, player_data: dict[str, Any]
