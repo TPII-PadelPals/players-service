@@ -1,10 +1,16 @@
 import uuid
-from typing import Any
+from typing import Annotated, Any
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Query, status
 
 from app.api.routes import players_availability
-from app.models.player import PlayerCreate, PlayerPublic, PlayerUpdate
+from app.models.player import (
+    PlayerCreate,
+    PlayerFilters,
+    PlayerListPublic,
+    PlayerPublic,
+    PlayerUpdate,
+)
 from app.services.players_availability_service import PlayersAvailabilityService
 from app.services.players_creation_service import PlayerCreationService
 from app.services.players_service import PlayersService
@@ -72,3 +78,14 @@ async def read_player(session: SessionDep, user_public_id: uuid.UUID) -> Any:
     Get Player by Public ID.
     """
     return await service.read_player(session, user_public_id)
+
+
+@router.get("/", response_model=PlayerListPublic, status_code=status.HTTP_200_OK)
+async def get_players_by_filters(
+    session: SessionDep, player_filters: Annotated[PlayerFilters, Query()]
+) -> Any:
+    """
+    Get Player/s by filter options.
+    """
+    player_list = await service.get_players_by_filters(session, player_filters)
+    return player_list.to_public()

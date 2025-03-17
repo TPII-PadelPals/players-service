@@ -1,6 +1,12 @@
 from uuid import UUID
 
-from app.models.player import Player, PlayerCreate, PlayerUpdate
+from app.models.player import (
+    Player,
+    PlayerCreate,
+    PlayerFilters,
+    PlayerList,
+    PlayerUpdate,
+)
 from app.repository.players_repository import PlayersRepository
 from app.services.google_service import GoogleService
 from app.utilities.dependencies import SessionDep
@@ -28,3 +34,10 @@ class PlayersService:
     async def read_player(self, session: SessionDep, user_public_id: UUID) -> Player:
         repo = PlayersRepository(session)
         return await repo.get_player_by_user_public_id(user_public_id)
+
+    async def get_players_by_filters(
+        self, session: SessionDep, player_filters: PlayerFilters
+    ) -> PlayerList:
+        repo = PlayersRepository(session)
+        players = await repo.get_players_by_filters(player_filters)
+        return players
