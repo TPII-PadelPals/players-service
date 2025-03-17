@@ -38,7 +38,7 @@ class PlayersSimilarityService:
             await StrokesService().get_strokes(session, user_public_id)
             for user_public_id in user_public_ids
         ]
-        strokes_array = np.array([stroke.to_numpy() for stroke in strokes])
+        strokes_array = np.array([stroke.to_numpy_array() for stroke in strokes])
 
         max_players = len(players.data)
         if n_players is not None:

@@ -66,7 +66,7 @@ class StrokeBase(SQLModel):
         default=BASE_SKILL_NEW, ge=LIMIT_MIN_OF_SKILL, le=LIMIT_MAX_OF_SKILL
     )
 
-    def to_numpy(self) -> npt.NDArray[np.integer]:
+    def to_numpy_array(self) -> npt.NDArray[np.integer]:
         strokes = np.sort(list(StrokeBase().model_dump().keys()))
         skills = np.array([getattr(self, attr) for attr in strokes])
         return skills
