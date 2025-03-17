@@ -9,7 +9,7 @@ from app.services.strokes_service import StrokesService
 from app.utilities.dependencies import SessionDep
 
 
-class PlayersSimilarityService:
+class PlayersFilteringService:
     DISTANCE_METRIC = "euclidean"
 
     async def get_players_by_filters(

@@ -13,8 +13,8 @@ from app.models.player import (
 )
 from app.services.players_availability_service import PlayersAvailabilityService
 from app.services.players_creation_service import PlayerCreationService
+from app.services.players_filtering_service import PlayersFilteringService
 from app.services.players_service import PlayersService
-from app.services.players_similarity_service import PlayersSimilarityService
 from app.services.strokes_service import StrokesService
 from app.utilities.dependencies import SessionDep
 from app.utilities.messages import (
@@ -88,6 +88,6 @@ async def get_players_by_filters(
     """
     Get Player/s by filter options.
     """
-    sim_service = PlayersSimilarityService()
-    player_list = await sim_service.get_players_by_filters(session, player_filters)
+    filter_service = PlayersFilteringService()
+    player_list = await filter_service.get_players_by_filters(session, player_filters)
     return player_list.to_public()
