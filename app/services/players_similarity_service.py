@@ -42,7 +42,7 @@ class PlayersSimilarityService:
 
         max_players = len(players.data)
         if n_players is not None:
-            max_players = min(len(players.data), n_players)
+            max_players = min(max_players, n_players)
 
         ball_tree = BallTree(strokes_array[1:], metric=self.DISTANCE_METRIC)
         _, idxs_neighbors = ball_tree.query(strokes_array[:1], k=max_players)
