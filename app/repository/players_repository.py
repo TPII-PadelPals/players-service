@@ -45,7 +45,9 @@ class PlayersRepository:
             raise NotFoundException(item="Player")
         return player
 
-    async def filter_players(self, _player_filters: PlayerFilters) -> PlayerList:
+    async def get_players_by_filters(
+        self, _player_filters: PlayerFilters
+    ) -> PlayerList:
         query = select(Player)
         result = await self.session.exec(query)
         return PlayerList(data=list(result.all()))

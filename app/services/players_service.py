@@ -36,7 +36,7 @@ class PlayersService:
         repo = PlayersRepository(session)
         return await repo.get_player_by_user_public_id(user_public_id)
 
-    async def filter_players(
+    async def get_players_by_filters(
         self, session: SessionDep, player_filters: PlayerFilters
     ) -> PlayerList:
         n_players = player_filters.n_players
@@ -44,7 +44,7 @@ class PlayersService:
             return PlayerList(data=[])
 
         repo = PlayersRepository(session)
-        players = await repo.filter_players(player_filters)
+        players = await repo.get_players_by_filters(player_filters)
 
         sim_service = PlayersSimilarityService()
         players = await sim_service.filter_similar_players(
