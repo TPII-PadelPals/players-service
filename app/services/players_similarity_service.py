@@ -3,7 +3,8 @@ from uuid import UUID
 import numpy as np
 from sklearn.neighbors import BallTree  # type: ignore
 
-from app.models.player import PlayerList
+from app.models.player import PlayerFilters, PlayerList
+from app.services.players_service import PlayersService
 from app.services.strokes_service import StrokesService
 from app.utilities.dependencies import SessionDep
 
@@ -11,11 +12,28 @@ from app.utilities.dependencies import SessionDep
 class PlayersSimilarityService:
     DISTANCE_METRIC = "euclidean"
 
-    async def get_players_by_similtude(
+    async def get_players_by_filters(
+        self, session: SessionDep, player_filters: PlayerFilters
+    ) -> PlayerList:
+        n_players = player_filters.n_players
+        user_public_id = player_filters.user_public_id
+        if n_players is not None and n_players <= 0:
+            return PlayerList(data=[])
+
+        players_service = PlayersService()
+        players = await players_service.get_players_by_filters(session, player_filters)
+        players = await self.get_players_by_similitude(
+            session, players, user_public_id, n_players
+        )
+
+        players.data = players.data[:n_players]
+        return players
+
+    async def get_players_by_similitude(
         self,
         session: SessionDep,
-        user_public_id: UUID | None,
         players: PlayerList,
+        user_public_id: UUID | None,
         n_players: int | None,
     ) -> PlayerList:
         """
