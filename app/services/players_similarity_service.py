@@ -11,7 +11,7 @@ from app.utilities.dependencies import SessionDep
 class PlayersSimilarityService:
     DISTANCE_METRIC = "euclidean"
 
-    async def filter_similar_players(
+    async def get_players_by_similtude(
         self,
         session: SessionDep,
         user_public_id: UUID | None,

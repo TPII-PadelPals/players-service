@@ -47,7 +47,7 @@ class PlayersService:
         players = await repo.get_players_by_filters(player_filters)
 
         sim_service = PlayersSimilarityService()
-        players = await sim_service.filter_similar_players(
+        players = await sim_service.get_players_by_similtude(
             session, player_filters.user_public_id, players, n_players
         )
 
