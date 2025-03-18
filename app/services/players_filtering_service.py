@@ -13,10 +13,14 @@ class PlayersFilteringService:
     DISTANCE_METRIC = "euclidean"
 
     async def get_players_by_filters(
-        self, session: SessionDep, player_filters: PlayerFilters
+        self,
+        session: SessionDep,
+        player_filters: PlayerFilters,
     ) -> PlayerList:
-        n_players = player_filters.n_players
         user_public_id = player_filters.user_public_id
+        player_filters.user_public_id = None
+        n_players = player_filters.n_players
+        player_filters.n_players = None
         if n_players is not None and n_players <= 0:
             return PlayerList(data=[])
 
