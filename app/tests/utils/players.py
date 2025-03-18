@@ -7,6 +7,7 @@ from app.models.player_availability import (
     PlayerAvailabilityBase,
     PlayerAvailabilityListUpdate,
 )
+from app.models.strokes import StrokeBase, StrokeUpdate
 from app.services.players_availability_service import PlayersAvailabilityService
 from app.services.players_creation_service import PlayerCreationService
 from app.services.players_service import PlayersService
@@ -48,5 +49,16 @@ class PlayerCreationExtendedService(PlayerCreationService):
             )
             await self.player_availability_service.update_player_availability(
                 session, user_public_id, available_days
+            )
+        if "strokes" in player_data:
+            strokes_skills = dict(
+                zip(
+                    StrokeBase().model_dump().keys(),
+                    player_data["strokes"],
+                    strict=False,
+                )
+            )
+            await self.strokes_service.update_strokes(
+                session, user_public_id, StrokeUpdate(**strokes_skills)
             )
         return player

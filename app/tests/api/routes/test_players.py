@@ -411,3 +411,43 @@ async def test_filter_players_by_address(
     result_players = content["data"]
     assert len(result_players) == 1
     assert result_players[0]["user_public_id"] == user_public_ids[0]
+
+
+async def test_filter_similar_strokes_players(
+    async_client: AsyncClient, x_api_key_header: dict[str, str], session: AsyncSession
+) -> None:
+    user_public_ids = {}
+    beginner = 1
+    intermediate = 2
+    advanced = 3
+    for level in [beginner, intermediate, advanced]:
+        for i in range(3 * level):
+            user_public_id = uuid.uuid4()
+            user_public_ids[(level, i)] = str(user_public_id)
+            player_data = {
+                "user_public_id": user_public_id,
+                "telegram_id": 1000 * level + i,
+                "strokes": [level] * 16,
+            }
+            await PlayerCreationExtendedService().create_player_extended(
+                session, player_data
+            )
+    for level in [beginner, intermediate, advanced]:
+        n_players = 3 * level - 1
+        response = await async_client.get(
+            f"{settings.API_V1_STR}/players/",
+            headers=x_api_key_header,
+            params={
+                "user_public_id": user_public_ids[(level, 0)],
+                "n_players": n_players,
+            },
+        )
+        assert response.status_code == 200
+        content = response.json()
+        result_players = content["data"]
+        assert len(result_players) == n_players
+        expected_user_public_ids = {
+            user_public_ids[(level, i)] for i in range(1, 3 * level)
+        }
+        for result_player in result_players:
+            assert result_player["user_public_id"] in expected_user_public_ids

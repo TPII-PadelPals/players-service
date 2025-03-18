@@ -66,6 +66,8 @@ class Player(PlayerBase, PlayerImmutable, table=True):
 
 class PlayerFilters(PlayerBase):
     available_days: list[WeekDay] | None = Field(default=None)
+    user_public_id: UUID | None = Field(default=None)
+    n_players: int | None = Field(default=None)
 
     def _get_available_days_conditions(self, data: dict[str, Any]) -> list[Any]:
         avail_days = data.pop("available_days", None)
@@ -116,13 +118,13 @@ class PlayerFilters(PlayerBase):
         return equal_conditions
 
     def to_sqlalchemy(self) -> Any:
-        data = self.model_dump(exclude_unset=True)
+        data = self.model_dump(exclude_unset=True, exclude_none=True)
         all_conditions = []
         all_conditions += self._get_available_days_conditions(data)
         all_conditions += self._get_time_conditions(data)
         all_conditions += self._get_coords_conditions(data)
         all_conditions += self._get_equal_conditions(data)
-        return and_(*all_conditions)
+        return and_(True, *all_conditions)
 
 
 class PlayerListPublic(SQLModel):
