@@ -17,10 +17,15 @@ class PlayersFilteringService:
         session: SessionDep,
         player_filters: PlayerFilters,
     ) -> PlayerList:
+        # Start TODO
+        # Investigate how to extract this params
+        # from PlayerFilters and set them as extra
+        # params of the API request
         user_public_id = player_filters.user_public_id
         player_filters.user_public_id = None
         n_players = player_filters.n_players
         player_filters.n_players = None
+        # End TODO
         if n_players is not None and n_players <= 0:
             return PlayerList(data=[])
 
