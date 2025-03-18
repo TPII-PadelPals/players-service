@@ -22,14 +22,14 @@ class PlayersFilteringService:
 
         players_service = PlayersService()
         players = await players_service.get_players_by_filters(session, player_filters)
-        players = await self.get_players_by_similitude(
+        players = await self._get_players_by_similitude(
             session, players, user_public_id, n_players
         )
 
         players.data = players.data[:n_players]
         return players
 
-    async def get_players_by_similitude(
+    async def _get_players_by_similitude(
         self,
         session: SessionDep,
         players: PlayerList,
