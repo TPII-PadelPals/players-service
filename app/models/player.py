@@ -6,7 +6,7 @@ from sqlalchemy.sql.expression import and_
 from sqlmodel import Field, Index, SQLModel
 
 from app.models.player_availability import PlayerAvailability, WeekDay
-from app.utilities.math_sql import distance_euclidean_sql
+from app.utilities.math_sql import distance_radians_sql
 
 
 # Shared properties
@@ -65,6 +65,8 @@ class Player(PlayerBase, PlayerImmutable, table=True):
 
 
 class PlayerFilters(PlayerBase):
+    EARTH_RADIUS_KM: ClassVar[float] = 6371.0
+
     available_days: list[WeekDay] | None = Field(default=None)
     user_public_id: UUID | None = Field(default=None)
     n_players: int | None = Field(default=None)
@@ -101,12 +103,13 @@ class PlayerFilters(PlayerBase):
             Player.latitude.isnot(None),  # type: ignore
             Player.longitude.isnot(None),  # type: ignore
             Player.search_range_km.isnot(None),  # type: ignore
-            distance_euclidean_sql(
+            distance_radians_sql(
                 Player.latitude,  # type: ignore
                 Player.longitude,  # type: ignore
                 latitude,
                 longitude,
             )
+            * self.EARTH_RADIUS_KM
             < Player.search_range_km,
         ]
         return coords_conditions

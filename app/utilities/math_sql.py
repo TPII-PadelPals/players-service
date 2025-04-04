@@ -3,5 +3,15 @@ from typing import Any
 from sqlalchemy import Function, func
 
 
-def distance_euclidean_sql(x1: float, y1: float, x2: float, y2: float) -> Function[Any]:
-    return func.sqrt(func.pow(x1 - x2, 2) + func.pow(y1 - y2, 2))
+def distance_radians_sql(
+    x1: float,
+    y1: float,
+    x2: float,
+    y2: float,
+) -> Function[Any]:
+    return func.acos(
+        func.sin(func.radians(x1)) * func.sin(func.radians(x2))
+        + func.cos(func.radians(x1))
+        * func.cos(func.radians(x2))
+        * func.cos(func.radians(y2) - (func.radians(y1)))
+    )
