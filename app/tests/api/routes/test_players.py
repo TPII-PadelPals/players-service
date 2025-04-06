@@ -384,8 +384,18 @@ async def test_filter_players_by_coordinates_and_search_range_km(
 
 
 async def test_filter_players_by_address(
-    async_client: AsyncClient, x_api_key_header: dict[str, str], session: AsyncSession
+    async_client: AsyncClient,
+    x_api_key_header: dict[str, str],
+    session: AsyncSession,
+    monkeypatch: Any,
 ) -> None:
+    GET_COORDS_RESULT = (0.4, 0.3)
+
+    async def mock_get_coordinates(_self: Any, _: str) -> tuple[float, float]:
+        return GET_COORDS_RESULT
+
+    monkeypatch.setattr(GoogleService, "get_coordinates", mock_get_coordinates)
+
     address = "Av. Paseo Colon 85{}"
     user_public_ids = []
     for i in range(3):

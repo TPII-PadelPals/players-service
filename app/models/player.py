@@ -6,7 +6,7 @@ from sqlalchemy.sql.expression import and_
 from sqlmodel import Field, Index, SQLModel
 
 from app.models.player_availability import PlayerAvailability, WeekDay
-from app.utilities.math_sql import distance_euclidean_sql
+from app.utilities.math_sql import distance_haversine_sql, km_to_rads
 
 
 # Shared properties
@@ -101,13 +101,15 @@ class PlayerFilters(PlayerBase):
             Player.latitude.isnot(None),  # type: ignore
             Player.longitude.isnot(None),  # type: ignore
             Player.search_range_km.isnot(None),  # type: ignore
-            distance_euclidean_sql(
+            distance_haversine_sql(
                 Player.latitude,  # type: ignore
-                Player.longitude,  # type: ignore
                 latitude,
+                Player.longitude,  # type: ignore
                 longitude,
             )
-            < Player.search_range_km,
+            < km_to_rads(
+                Player.search_range_km  # type: ignore
+            ),
         ]
         return coords_conditions
 
