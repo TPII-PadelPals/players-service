@@ -10,9 +10,8 @@ async def test_update_player_availability_days(
     async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
     user_public_id = str(uuid.uuid4())
-    telegram_id = 10103030
 
-    post_data = {"user_public_id": user_public_id, "telegram_id": telegram_id}
+    post_data = {"user_public_id": user_public_id}
     response_post = await async_client.post(
         f"{settings.API_V1_STR}/players/", headers=x_api_key_header, json=post_data
     )

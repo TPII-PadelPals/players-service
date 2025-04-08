@@ -21,9 +21,8 @@ async def test_create_player(
     async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
     user_public_id = str(uuid.uuid4())
-    telegram_id = 10103030
 
-    data = {"user_public_id": user_public_id, "telegram_id": telegram_id}
+    data = {"user_public_id": user_public_id}
 
     response = await async_client.post(
         f"{settings.API_V1_STR}/players/", headers=x_api_key_header, json=data
@@ -32,7 +31,6 @@ async def test_create_player(
     content = response.json()
 
     assert content["user_public_id"] == user_public_id
-    assert content["telegram_id"] == telegram_id
     assert content["search_range_km"] is None
     assert content["address"] is None
     assert content["latitude"] is None
@@ -45,12 +43,12 @@ async def test_create_player_user_public_id_already_exists_responds_409(
 ) -> None:
     user_public_id = str(uuid.uuid4())
 
-    data = {"user_public_id": user_public_id, "telegram_id": 11112222}
+    data = {"user_public_id": user_public_id}
     await async_client.post(
         f"{settings.API_V1_STR}/players/", headers=x_api_key_header, json=data
     )
 
-    data = {"user_public_id": user_public_id, "telegram_id": 33334444}
+    data = {"user_public_id": user_public_id}
     response = await async_client.post(
         f"{settings.API_V1_STR}/players/", headers=x_api_key_header, json=data
     )
@@ -75,7 +73,7 @@ async def test_create_player_when_player_availability_service_raise_exception_re
 
     user_public_id = str(uuid.uuid4())
 
-    data = {"user_public_id": user_public_id, "telegram_id": 11112222}
+    data = {"user_public_id": user_public_id}
     response = await async_client.post(
         f"{settings.API_V1_STR}/players/", headers=x_api_key_header, json=data
     )
@@ -104,9 +102,8 @@ async def test_update_player_no_address(
     async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
     user_public_id = str(uuid.uuid4())
-    telegram_id = 10103030
 
-    post_data = {"user_public_id": user_public_id, "telegram_id": telegram_id}
+    post_data = {"user_public_id": user_public_id}
     response_post = await async_client.post(
         f"{settings.API_V1_STR}/players/", headers=x_api_key_header, json=post_data
     )
@@ -129,7 +126,6 @@ async def test_update_player_no_address(
     content = response.json()
 
     assert content["user_public_id"] == created_player["user_public_id"]
-    assert content["telegram_id"] == created_player["telegram_id"]
     assert content["time_availability"] == patch_data["time_availability"]
     assert content["search_range_km"] == patch_data["search_range_km"]
     assert content["address"] is None
@@ -148,9 +144,8 @@ async def test_update_player_with_address(
     monkeypatch.setattr(GoogleService, "get_coordinates", mock_get_coordinates)
 
     user_public_id = str(uuid.uuid4())
-    telegram_id = 10103030
 
-    post_data = {"user_public_id": user_public_id, "telegram_id": telegram_id}
+    post_data = {"user_public_id": user_public_id}
     response_post = await async_client.post(
         f"{settings.API_V1_STR}/players/", headers=x_api_key_header, json=post_data
     )
@@ -172,7 +167,6 @@ async def test_update_player_with_address(
     content = response.json()
 
     assert content["user_public_id"] == created_player["user_public_id"]
-    assert content["telegram_id"] == created_player["telegram_id"]
     assert content["time_availability"] == patch_data["time_availability"]
     assert content["search_range_km"] == patch_data["search_range_km"]
     assert content["address"] == patch_data["address"]
@@ -200,9 +194,8 @@ async def test_update_player_with_time_availability_more_than_seven_responds_422
     async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
     user_public_id = str(uuid.uuid4())
-    telegram_id = 10103030
 
-    post_data = {"user_public_id": user_public_id, "telegram_id": telegram_id}
+    post_data = {"user_public_id": user_public_id}
     response_post = await async_client.post(
         f"{settings.API_V1_STR}/players/", headers=x_api_key_header, json=post_data
     )
@@ -226,9 +219,8 @@ async def test_update_player_with_time_availability_less_than_1_responds_422(
     async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
     user_public_id = str(uuid.uuid4())
-    telegram_id = 10103030
 
-    post_data = {"user_public_id": user_public_id, "telegram_id": telegram_id}
+    post_data = {"user_public_id": user_public_id}
     response_post = await async_client.post(
         f"{settings.API_V1_STR}/players/", headers=x_api_key_header, json=post_data
     )
@@ -257,7 +249,6 @@ async def test_filter_players_by_available_days(
         user_public_ids[i] = str(user_public_id)
         player_data = {
             "user_public_id": user_public_id,
-            "telegram_id": 1000 * i,
             "available_days": [i],
         }
         await PlayerCreationExtendedService().create_player_extended(
@@ -302,7 +293,6 @@ async def test_filter_players_by_time_availability(
         user_public_ids[i] = str(user_public_id)
         player_data = {
             "user_public_id": user_public_id,
-            "telegram_id": 1000 * i,
             "time_availability": i,
         }
         await PlayerCreationExtendedService().create_player_extended(
@@ -350,7 +340,6 @@ async def test_filter_players_by_coordinates_and_search_range_km(
         expected_user_public_ids.append(str(user_public_id))
         player_data = {
             "user_public_id": user_public_id,
-            "telegram_id": 1000 * i,
             "search_range_km": i,
             "latitude": sqrt((coordinates[0] + i) / 2),
             "longitude": sqrt((coordinates[1] + i) / 2),
@@ -361,7 +350,6 @@ async def test_filter_players_by_coordinates_and_search_range_km(
     for i in range(4, 6 + 1):
         player_data = {
             "user_public_id": uuid.uuid4(),
-            "telegram_id": 1000 * i,
             "search_range_km": i,
             "latitude": coordinates[0] + i,
             "longitude": coordinates[1] + i,
@@ -403,7 +391,6 @@ async def test_filter_players_by_address(
         user_public_ids.append(str(user_public_id))
         player_data = {
             "user_public_id": user_public_id,
-            "telegram_id": 1000 + i,
             "address": address.format(i),
         }
         await PlayerCreationExtendedService().create_player_extended(
@@ -436,7 +423,6 @@ async def test_filter_similar_strokes_players(
             user_public_ids[(level, i)] = str(user_public_id)
             player_data = {
                 "user_public_id": user_public_id,
-                "telegram_id": 1000 * level + i,
                 "strokes": [level] * 16,
             }
             await PlayerCreationExtendedService().create_player_extended(

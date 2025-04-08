@@ -10,17 +10,15 @@ from app.utilities.exceptions import NotFoundException, NotUniqueException
 
 async def test_create_player(session: AsyncSession) -> None:
     user_public_id = str(uuid.uuid4())
-    telegram_id = 10103030
 
     repo = PlayersRepository(session)
-    player_create = PlayerCreate(user_public_id=user_public_id, telegram_id=telegram_id)
+    player_create = PlayerCreate(user_public_id=user_public_id)
 
     player = await repo.create_player(player_create)
     await session.commit()
     await session.refresh(player)
 
     assert player.user_public_id == player_create.user_public_id
-    assert player.telegram_id == player_create.telegram_id
     assert player.search_range_km is None
     assert player.address is None
     assert player.latitude is None
@@ -36,16 +34,14 @@ async def test_create_player_with_user_public_id_already_exists_raises_exception
     user_public_id = uuid.uuid4()
     duplicated_user_p_id = user_public_id
 
-    player_create = PlayerCreate(user_public_id=user_public_id, telegram_id=30304040)
+    player_create = PlayerCreate(user_public_id=user_public_id)
 
     player = await repo.create_player(player_create)
     await session.commit()
     await session.refresh(player)
 
     with pytest.raises(NotUniqueException) as e:
-        player_create = PlayerCreate(
-            user_public_id=duplicated_user_p_id, telegram_id=50509090
-        )
+        player_create = PlayerCreate(user_public_id=duplicated_user_p_id)
         await repo.create_player(player_create)
         await session.commit()
     await session.rollback()
@@ -54,10 +50,9 @@ async def test_create_player_with_user_public_id_already_exists_raises_exception
 
 async def test_update_player(session: AsyncSession) -> None:
     user_public_id = str(uuid.uuid4())
-    telegram_id = 10103030
 
     repo = PlayersRepository(session)
-    player_create = PlayerCreate(user_public_id=user_public_id, telegram_id=telegram_id)
+    player_create = PlayerCreate(user_public_id=user_public_id)
 
     player = await repo.create_player(player_create)
     await session.commit()
@@ -70,7 +65,6 @@ async def test_update_player(session: AsyncSession) -> None:
     updated_player = await repo.update_player(player.user_public_id, player_update)
 
     assert updated_player.user_public_id == player.user_public_id
-    assert updated_player.telegram_id == player.telegram_id
     assert updated_player.time_availability == time_availability
     assert updated_player.search_range_km == player.search_range_km
     assert updated_player.address == player.address

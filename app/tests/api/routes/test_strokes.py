@@ -10,9 +10,8 @@ async def test_create_player_create_strokes_associated(
 ) -> None:
     user_public_id = uuid.uuid4()
     user_public_id_str = str(user_public_id)
-    telegram_id = 10103030
 
-    data_player = {"user_public_id": user_public_id_str, "telegram_id": telegram_id}
+    data_player = {"user_public_id": user_public_id_str}
 
     response_player = await async_client.post(
         f"{settings.API_V1_STR}/players/", headers=x_api_key_header, json=data_player
@@ -41,9 +40,8 @@ async def test_update_strokes(
 ) -> None:
     user_public_id = uuid.uuid4()
     user_public_id_str = str(user_public_id)
-    telegram_id = 10103030
 
-    data_player = {"user_public_id": user_public_id_str, "telegram_id": telegram_id}
+    data_player = {"user_public_id": user_public_id_str}
 
     response_player = await async_client.post(
         f"{settings.API_V1_STR}/players/", headers=x_api_key_header, json=data_player
