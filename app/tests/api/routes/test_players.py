@@ -249,7 +249,6 @@ async def test_filter_players_by_available_days(
         user_public_ids[i] = str(user_public_id)
         player_data = {
             "user_public_id": user_public_id,
-            "telegram_id": 1000 * i,
             "available_days": [i],
         }
         await PlayerCreationExtendedService().create_player_extended(
@@ -294,7 +293,6 @@ async def test_filter_players_by_time_availability(
         user_public_ids[i] = str(user_public_id)
         player_data = {
             "user_public_id": user_public_id,
-            "telegram_id": 1000 * i,
             "time_availability": i,
         }
         await PlayerCreationExtendedService().create_player_extended(
@@ -342,7 +340,6 @@ async def test_filter_players_by_coordinates_and_search_range_km(
         expected_user_public_ids.append(str(user_public_id))
         player_data = {
             "user_public_id": user_public_id,
-            "telegram_id": 1000 * i,
             "search_range_km": i,
             "latitude": sqrt((coordinates[0] + i) / 2),
             "longitude": sqrt((coordinates[1] + i) / 2),
@@ -353,7 +350,6 @@ async def test_filter_players_by_coordinates_and_search_range_km(
     for i in range(4, 6 + 1):
         player_data = {
             "user_public_id": uuid.uuid4(),
-            "telegram_id": 1000 * i,
             "search_range_km": i,
             "latitude": coordinates[0] + i,
             "longitude": coordinates[1] + i,
@@ -395,7 +391,6 @@ async def test_filter_players_by_address(
         user_public_ids.append(str(user_public_id))
         player_data = {
             "user_public_id": user_public_id,
-            "telegram_id": 1000 + i,
             "address": address.format(i),
         }
         await PlayerCreationExtendedService().create_player_extended(
@@ -428,7 +423,6 @@ async def test_filter_similar_strokes_players(
             user_public_ids[(level, i)] = str(user_public_id)
             player_data = {
                 "user_public_id": user_public_id,
-                "telegram_id": 1000 * level + i,
                 "strokes": [level] * 16,
             }
             await PlayerCreationExtendedService().create_player_extended(
