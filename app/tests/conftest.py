@@ -12,6 +12,9 @@ from app.core.config import test_settings
 from app.core.db import get_async_engine, init_db
 from app.main import app
 from app.models.item import Item
+from app.models.player import Player
+from app.models.player_availability import PlayerAvailability
+from app.models.strokes import Stroke
 from app.tests.utils.utils import get_x_api_key_header
 from app.utilities.dependencies import get_db
 
@@ -20,11 +23,16 @@ from app.utilities.dependencies import get_db
 async def db() -> AsyncGenerator[AsyncSession, None]:
     db_url = str(test_settings.SQLALCHEMY_DATABASE_URI)
     async with AsyncSession(get_async_engine(db_url)) as session:
-        await init_db(db_url)
-        yield session
-        statement = delete(Item)
-        await session.exec(statement)  # type: ignore[call-overload]
-        await session.commit()
+        try:
+            await init_db(db_url)
+            yield session
+            await session.exec(delete(Item))  # type: ignore[call-overload]
+            await session.exec(delete(Stroke))  # type: ignore[call-overload]
+            await session.exec(delete(Player))  # type: ignore[call-overload]
+            await session.exec(delete(PlayerAvailability))  # type: ignore[call-overload]
+            await session.commit()
+        finally:
+            await session.close()
 
 
 @pytest_asyncio.fixture(name="async_client")

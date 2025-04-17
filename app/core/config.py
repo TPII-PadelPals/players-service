@@ -23,11 +23,15 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
     API_KEY: str
+    GOOGLE_API_KEY: str
 
     # Services
     ITEMS_SERVICE_HOST: str
     ITEMS_SERVICE_PORT: int | None = None
     ITEMS_SERVICE_API_KEY: str | None = None
+
+    # Testing
+    POSTGRES_DB_TESTING: str
 
     @computed_field  # type: ignore[prop-decorator]
     @property
@@ -52,7 +56,7 @@ class TestSettings(Settings):
             password=self.POSTGRES_PASSWORD,
             host=self.POSTGRES_SERVER,
             port=self.POSTGRES_PORT_EXT,
-            path=self.POSTGRES_DB + "_test",
+            path=self.POSTGRES_DB_TESTING,
         )
 
 
