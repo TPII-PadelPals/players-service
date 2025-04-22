@@ -2,6 +2,7 @@ import uuid
 from math import sqrt
 from typing import Any
 
+import numpy as np
 from httpx import AsyncClient
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -447,3 +448,44 @@ async def test_filter_similar_strokes_players(
         }
         for result_player in result_players:
             assert result_player["user_public_id"] in expected_user_public_ids
+
+
+async def test_filter_similar_strokes_players_returns_them_in_decreasing_order_of_similarity(
+    async_client: AsyncClient, x_api_key_header: dict[str, str], session: AsyncSession
+) -> None:
+    user_public_ids = []
+    beginner = 1
+    advanced = 3
+    n_players = 9
+    for level in np.linspace(beginner, advanced, n_players):
+        user_public_id = uuid.uuid4()
+        user_public_ids.append(str(user_public_id))
+        player_data = {
+            "user_public_id": user_public_id,
+            "strokes": [float(level)] * 16,
+        }
+        await PlayerCreationExtendedService().create_player_extended(
+            session, player_data
+        )
+    idx_beginner = 0
+    idx_advanced = -1
+    for idx_player in [idx_beginner, idx_advanced]:
+        n_similar = n_players - 1
+        response = await async_client.get(
+            f"{settings.API_V1_STR}/players/",
+            headers=x_api_key_header,
+            params={
+                "user_public_id": user_public_ids[idx_player],
+                "n_players": n_similar,
+            },
+        )
+        assert response.status_code == 200
+        content = response.json()
+        result_players = content["data"]
+        assert len(result_players) == n_similar
+        step_sense = (-1) ** abs(idx_player)
+        expected_user_public_ids = user_public_ids[
+            (idx_player + step_sense) :: step_sense
+        ]
+        result_user_public_ids = [player["user_public_id"] for player in result_players]
+        assert result_user_public_ids == expected_user_public_ids
