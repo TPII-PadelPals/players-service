@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 from sqlmodel import SQLModel
 
 from app.core.config import settings
-from app.models import Player, PlayerAvailability  # noqa: F401
+from app.models import Item, Player, PlayerAvailability, Stroke  # noqa: F401
 
 
 def get_async_engine(
