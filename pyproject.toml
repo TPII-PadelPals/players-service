@@ -13,8 +13,9 @@ dependencies = [
     "jinja2<4.0.0,>=3.1.4",
     "asyncpg<1.0.0,>=0.30.0",
     "requests<3.0.0,>=2.32.3",
-    "numpy>=2.2.3",
-    "scikit-learn>=1.6.1",
+    "numpy==1.26.4",
+    "scikit-learn==1.4.2",
+    "scikit-learn-extra==0.3.0",
 ]
 
 [tool.uv]
@@ -66,3 +67,6 @@ keep-runtime-typing = true
 [tool.pytest.ini_options]
 asyncio_mode="auto"
 asyncio_default_fixture_loop_scope="session"
+filterwarnings = [
+    "ignore::DeprecationWarning:sklearn_extra.cluster._commonnn"
+]
