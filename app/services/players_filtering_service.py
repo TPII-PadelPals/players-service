@@ -1,16 +1,16 @@
 from uuid import UUID
 
 import numpy as np
-from sklearn.neighbors import BallTree  # type: ignore
 
 from app.models.player import PlayerFilters, PlayerList
 from app.services.players_service import PlayersService
 from app.services.strokes_service import StrokesService
 from app.utilities.dependencies import SessionDep
+from app.utilities.neighbors import nearest_neighbors_query
 
 
 class PlayersFilteringService:
-    DISTANCE_METRIC = "euclidean"
+    DISTANCE_METRIC = "cityblock"
 
     async def get_players_by_filters(
         self,
@@ -71,8 +71,13 @@ class PlayersFilteringService:
         if n_players is not None:
             max_players = min(max_players, n_players)
 
-        ball_tree = BallTree(strokes_array[1:], metric=self.DISTANCE_METRIC)
-        _, idxs_neighbors = ball_tree.query(strokes_array[:1], k=max_players)
+        idxs_neighbors = nearest_neighbors_query(
+            X=strokes_array[1:],
+            query=strokes_array[:1],
+            n_neighbors=max_players,
+            metric=self.DISTANCE_METRIC,
+            algorithm="auto",
+        )
 
         players.data = [players.data[idx] for idx in idxs_neighbors.flatten()]
         return players
