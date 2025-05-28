@@ -1,54 +1,46 @@
-import uuid
 from typing import Any
 
 from app.models import Player, PlayerAvailability
 from app.models.player_availability import WeekDay
 from app.models.strokes import Stroke
 
+ASSIGNED_UUID = "db08d286-58cf-4542-8501-efa273e38be4"
+
+SIMILAR_UUIDS = [
+    "3cbccfa2-65d7-4d49-b801-b7f30daae857",
+    "96ff36d6-bd6e-49c3-a666-cda2d2865be0",
+    "a80a64fb-9672-450c-a98e-bcf366ea6ac8",
+]
+
 
 class PlayersPaseoColon:
-    n_players = 3
-    _players: list[Player] = []
-
-    @classmethod
-    def records(cls) -> list[Any]:
-        return cls.players() + cls.players_availabilities() + cls.strokes()
-
-    @classmethod
-    def players(cls) -> list[Any]:
-        if not cls._players:
-            cls._players = [
+    def __init__(self, players_uuids: list[str]) -> None:
+        self.players = []
+        self.players_avails = []
+        self.strokes = []
+        for player_uuid in players_uuids:
+            self.players.append(
                 Player(
-                    user_public_id=uuid.uuid4(),
+                    user_public_id=player_uuid,
                     search_range_km=10,
                     address="Av. Paseo Colon 850, CABA",
                     latitude=-34.617393884228775,
                     longitude=-58.368213261883554,
                     time_availability=1,
                 )
-                for _ in range(cls.n_players)
-            ]
-        return cls._players
-
-    @classmethod
-    def players_availabilities(cls) -> list[Any]:
-        players_avails = [
-            PlayerAvailability(
-                user_public_id=player.user_public_id,
-                week_day=WeekDay.THURSDAY,
-                is_available=True,
             )
-            for player in cls.players()
-        ]
-        return players_avails
+            self.players_avails.append(
+                PlayerAvailability(
+                    user_public_id=player_uuid,
+                    week_day=WeekDay.THURSDAY,
+                    is_available=True,
+                )
+            )
+            self.strokes.append(Stroke(user_public_id=player_uuid))
 
-    @classmethod
-    def strokes(cls) -> list[Any]:
-        strokes = [
-            Stroke(user_public_id=player.user_public_id) for player in cls.players()
-        ]
-        return strokes
+    def records(self) -> list[Any]:
+        return self.players + self.players_avails + self.strokes
 
 
 RECORDS: list[Any] = []
-RECORDS += PlayersPaseoColon().records()
+RECORDS += PlayersPaseoColon([ASSIGNED_UUID] + SIMILAR_UUIDS).records()

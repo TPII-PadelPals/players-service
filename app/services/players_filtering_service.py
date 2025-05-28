@@ -1,31 +1,25 @@
 from uuid import UUID
 
 import numpy as np
-from sklearn.neighbors import BallTree  # type: ignore
 
 from app.models.player import PlayerFilters, PlayerList
 from app.services.players_service import PlayersService
 from app.services.strokes_service import StrokesService
 from app.utilities.dependencies import SessionDep
+from app.utilities.neighbors import NearestNeighborsWrapper
 
 
 class PlayersFilteringService:
-    DISTANCE_METRIC = "euclidean"
-
     async def get_players_by_filters(
         self,
         session: SessionDep,
         player_filters: PlayerFilters,
     ) -> PlayerList:
-        # Start TODO
-        # Investigate how to extract this params
-        # from PlayerFilters and set them as extra
-        # params of the API request
         user_public_id = player_filters.user_public_id
         player_filters.user_public_id = None
         n_players = player_filters.n_players
         player_filters.n_players = None
-        # End TODO
+
         if n_players is not None and n_players <= 0:
             return PlayerList(data=[])
 
@@ -71,8 +65,9 @@ class PlayersFilteringService:
         if n_players is not None:
             max_players = min(max_players, n_players)
 
-        ball_tree = BallTree(strokes_array[1:], metric=self.DISTANCE_METRIC)
-        _, idxs_neighbors = ball_tree.query(strokes_array[:1], k=max_players)
+        idxs_neighbors = NearestNeighborsWrapper().query(
+            X=strokes_array[1:], query=strokes_array[:1], n_neighbors=max_players
+        )
 
         players.data = [players.data[idx] for idx in idxs_neighbors.flatten()]
         return players
