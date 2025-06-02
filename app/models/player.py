@@ -77,6 +77,7 @@ class PlayerFilters(PlayerBase):
         ]
         for avail_day in avail_days:
             avail_days_conditions.append(PlayerAvailability.week_day == avail_day)
+            avail_days_conditions.append(PlayerAvailability.is_available)
         return avail_days_conditions
 
     def _get_time_conditions(self, data: dict[str, Any]) -> list[Any]:
