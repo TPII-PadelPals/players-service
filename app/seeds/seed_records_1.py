@@ -8,8 +8,8 @@ ASSIGNED_UUID = "db08d286-58cf-4542-8501-efa273e38be4"
 
 SIMILAR_UUIDS = [
     "3cbccfa2-65d7-4d49-b801-b7f30daae857",
-    "96ff36d6-bd6e-49c3-a666-cda2d2865be0",
-    "a80a64fb-9672-450c-a98e-bcf366ea6ac8",
+    # "96ff36d6-bd6e-49c3-a666-cda2d2865be0",
+    # "a80a64fb-9672-450c-a98e-bcf366ea6ac8",
 ]
 
 
